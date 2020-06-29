@@ -4,7 +4,6 @@ Faculty tab callacks
 
 # Third party imports
 from dash.dependencies import Input, Output
-from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
 
 from flask import current_app
@@ -26,10 +25,6 @@ def register_faculty_callbacks(dashapp):
 
     table = dynamo.tables[current_app.config['DB_DEPTPROFILE']]
 
-    ###############
-    ### FACULTY ###
-    ###############
-
     # CHART
 
     @dashapp.callback(Output('faculty-chart-container', 'children'),
@@ -43,7 +38,6 @@ def register_faculty_callbacks(dashapp):
         elif choice == 'fte-with-demo':
             return faculty_demo_chart
 
-
     @dashapp.callback(Output('faculty-fte-chart', 'figure'),
                       [Input('dept-dropdown', 'value')])
     def update_faculty_fte_chart(dept):
@@ -52,7 +46,7 @@ def register_faculty_callbacks(dashapp):
             KeyConditionExpression='PK = :pk AND SK BETWEEN :lower AND :upper',
             ExpressionAttributeValues={
                 ':pk': f'DEPT#{dept}',
-                ':lower': f'DATA#FACULTY_DATA#2005',
+                ':lower': 'DATA#FACULTY_DATA#2005',
                 ':upper': f'DATA#FACULTY_DATA#{int(MAX_FISCAL_YEAR) + 1}$',
             },
             ProjectionExpression='fte, ten_stat',
@@ -117,7 +111,7 @@ def register_faculty_callbacks(dashapp):
             KeyConditionExpression='PK = :pk AND SK BETWEEN :lower AND :upper',
             ExpressionAttributeValues={
                 ':pk': f'DEPT#{dept}',
-                ':lower': f'DATA#FACULTY_DATA#2005',
+                ':lower': 'DATA#FACULTY_DATA#2005',
                 ':upper': f'DATA#FACULTY_DATA#{int(MAX_FISCAL_YEAR) + 1}$',
             },
             FilterExpression=Attr('ten_stat').eq('Tenured') | Attr('ten_stat').eq('NTBOT'),
@@ -174,7 +168,7 @@ def register_faculty_callbacks(dashapp):
             )
         )
 
-        ## LINE PLOTS
+        # LINE PLOTS
 
         y_axis_line_t = [round(float(item.get('percent_fem')) * 100) if item.get('percent_fem') is not None else None
                          for item in data if item.get('ten_stat') == 'Tenured']
@@ -183,7 +177,7 @@ def register_faculty_callbacks(dashapp):
 
         chart_data.append(
             go.Scatter(
-                name=f'% Tenured Female',
+                name='% Tenured Female',
                 x=x_axis,
                 y=y_axis_line_t,
                 mode='lines+markers+text',
@@ -208,7 +202,7 @@ def register_faculty_callbacks(dashapp):
 
         chart_data.append(
             go.Scatter(
-                name=f'% NTBOT Female',
+                name='% NTBOT Female',
                 x=x_axis,
                 y=y_axis_line_nt,
                 mode='lines+markers+text',
@@ -249,7 +243,7 @@ def register_faculty_callbacks(dashapp):
 
         chart_data.append(
             go.Scatter(
-                name=f'% NTBOT and Tenured URM',
+                name='% NTBOT and Tenured URM',
                 x=x_axis,
                 y=y_axis_line_urm,
                 mode='lines+markers+text',

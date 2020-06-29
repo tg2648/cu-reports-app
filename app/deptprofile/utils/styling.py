@@ -21,9 +21,7 @@ def axes(
         tickfont_family='sans-serif',
         tickfont_size=14,
         tickfont_color='black',
-        # showline=True,
-        **kwargs
-        ):
+        **kwargs):
 
     axis = dict(
         title=title,
@@ -49,7 +47,6 @@ def axes(
             size=tickfont_size,
             color=tickfont_color
         ),
-        # showline=showline
     )
 
     for key, value in kwargs.items():
@@ -59,11 +56,11 @@ def axes(
 
 
 def margin(l=45, t=5, autoexpand=True):
-    
+
     margin = dict(
         l=l,
         t=t,
         autoexpand=autoexpand
     )
-    
+
     return margin
