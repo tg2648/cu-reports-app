@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+{%- block head %}
+{%- if config['ENV'] == 'prod' %}
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-145333546-1"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'UA-145333546-1');
+</script>
+{%- endif %}
+<title>{%- block title %}A&S Reporting{%- endblock title %}</title>
+
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="https://cu-dash-static.s3.us-east-2.amazonaws.com/img/favicon.png" type="image/x-icon">
+<link rel="icon" href="https://cu-dash-static.s3.us-east-2.amazonaws.com/img/favicon.png" type="image/x-icon">
+
+<!-- Bootstrap/FontAwesome CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.0/cerulean/bootstrap.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" crossorigin="anonymous">
+{%- endblock head %}
+</head>
+
+<body>
+{%- block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<div class="container">
+    <a class="navbar-brand mb-0 h1" href="/">
+        <img src="https://cu-dash-static.s3.us-east-2.amazonaws.com/img/crown-white.png" height="30" class="d-inline-block align-top mr-2">A&S Reporting
+    </a>
+    
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarColor02">
+        <ul class="navbar-nav mr-auto">
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('lab_occupancy.index') }}">Lab Occupancy Form</a>
+            </li>
+
+                <div style="border-left:1px solid rgba(255,255,255,0.5)"></div>
+
+            {#
+            <li class="nav-item">
+                <a class="nav-link" href="/deptprofile/">Dept. Profile</a>
+            </li>
+            #}
+
+            <li class="nav-item">
+                <a class="nav-link" href="/searchcom/">Search Dashboard</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('fif_archive.index') }}">FIF Archive</a>
+            </li>
+            {#
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+                    FIF
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/fif/">FIF Dashboard</a>
+                    <a class="dropdown-item" href="{{ url_for('fif_archive.index') }}">FIF Archive</a>
+                </div>
+            </li>    
+            #}
+        </ul>
+        {% if not 'CAS_USERNAME' in session %}
+            <form class="form-inline my-2 my-lg-0" action="{{ url_for('cas.login') }}">
+                <button class="btn btn-secondary my-2 my-sm-0">Login</button>
+            </form>
+        {% else %}
+            <span class="navbar-text">
+                Signed in as {{ session.CAS_USERNAME }} 
+            </span>
+            <form class="form-inline my-2 my-lg-0" action="{{ url_for('cas.logout') }}">
+                <button class="btn btn-secondary my-2 ml-2 my-sm-0">Logout</button>
+            </form>
+        {% endif %}
+        </ul>   
+    </div>
+</div>
+</nav>
+{%- endblock navbar %}
+
+<div class="container">
+{%- block content %}
+{%- endblock content %}
+</div>
+
+{%- block scripts %}
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+{%- endblock scripts %}
+
+{%- block honeypot %}
+{# Honeypot endpoint for AWS WAF #}
+    <a href="https://gmykhpse01.execute-api.us-east-2.amazonaws.com/ProdStage/" rel="nofollow" style="display: none" aria-hidden="true"></a>
+{%- endblock honeypot %}
+</body>
+
+</html>

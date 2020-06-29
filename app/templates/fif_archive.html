@@ -1,0 +1,42 @@
+{%- extends "base.html" %}
+{%- block title %}FIF Archive{%- endblock title %}
+{%- block content %}
+<div class="col-12-xs">
+    {% if (files | convert_to_list) %} {# files is initially a boto3 objectsCollection object #}
+    <h3 class="text-info my-4">Submitted FIFs (starting 2018/19)</h3>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Filename</th>
+                <th scope="col">Last Modified</th>
+                <th scope="col">Type</th>
+                <th scope="col" class="text-center">Download</th>
+            </tr>
+        </thead>
+        <tbody>
+        {# Exclude any 'folder' objects that end with a forward slash, keep only file objects #}
+        {% for f in files if not f.key[-1] == '/' %}
+        <tr scope="row">
+            <td class="align-middle">{{ f.key | file_name }}</td>
+            <td class="align-middle">{{ f.last_modified | datetimeformat }}</td>
+            <td class="align-middle">{{ f.key | file_type }}</td>
+            <td class="text-center">
+                <form class="download-form" action="{{ url_for('fif_archive.download') }}" method="POST">
+                    <input type="hidden" name="key" value="{{ f.key | serialize }}">
+                    <button type="submit" class="btn btn-default btn-sm">
+                      <i class="fa fa-download fa-lg"></i>
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-warning mt-4">
+        <h5 class="alert-heading">Your FIFs could not be found</h5>
+        <p class="mb-0">If you filled out last year's form online, please reach out to <a href="mailto:tg2648@columbia.edu" class="alert-link">Timur Gulyamov (tg2648)</a> to make it available on this page.</p>
+    </div>
+    {% endif %}
+</div>
+{%- endblock %}

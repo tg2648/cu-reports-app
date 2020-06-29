@@ -1,0 +1,41 @@
+{# Unlike other templates, this template is served from S3 using render_template_string() to avoid re-deployment on any changes #}
+{%- extends "base.html" %}
+
+{%- block content %}
+<div class="page-header">
+
+  <h4 class="text-info mt-4">Faculty Information Form Changelog</h4>
+  
+  <h4 class="text-info mt-4">2019-20</h4>
+
+  <h5 class="text-info mt-3">Both forms:</h5>
+  <ul>
+    <li>Pre-populated major research fields and current projects from last year's submission (if submitted online). <img src="https://cu-dash-static.s3.us-east-2.amazonaws.com/img/party.png" height="25px"></li>
+    <li>Changed Publications to an open text field.</li>
+    <li>Indicated that in-progress or under review publications may also be included.</li>
+    <li>Added auditing to pre-populated courses.</li>
+    <li>Changed "credits" to "points".</li>
+    <li>Added instructions on how to replace an uploaded CV.</li>
+    <li>Added more example about what can go in the Additional Information section.</li>
+    <li>Made the message displayed after form submission less generic.</li>
+  </ul>
+  
+  <h5 class="text-info mt-3">Professorial form:</h5>
+  <ul>
+    <li>Changed "Dissertation title" to "Dissertation topic, area or title".</li>
+    <li>Removed the question about the number of PhD dissertations completed in the last five years.</li>
+    <li>Grants data is provided at the award level.</li>
+  </ul>
+
+  <h5 class="text-info mt-3">Lecturer form:</h5>
+  <ul>
+    <li>Added an optional field to provide information on summer teaching.</li>
+  </ul>
+  
+  <h5 class="text-info mt-3">PDF copies:</h5>
+  <ul>
+    <li>Last year's forms can be accesssed online through <a href="https://reports.fas.columbia.edu/fif_archive/">FIF Archive</a>.</li>
+  </ul>
+
+</div>
+{%- endblock %}

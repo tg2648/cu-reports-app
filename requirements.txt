@@ -1,0 +1,10 @@
+arrow==0.15.7
+boto3==1.12.49
+dash==1.13.4
+dash-bootstrap-components==0.10.3
+Flask==1.1.2
+flask-cas-ng==1.1.0
+flask-dynamo==0.1.2
+pandas==1.0.5
+plotly==4.8.2
+python-dotenv==0.13.0

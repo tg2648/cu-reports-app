@@ -1,0 +1,6 @@
+/* Remove the Aa in legends with text
+https://github.com/plotly/plotly.js/issues/2967#issuecomment-463332472 */
+
+g.pointtext {
+    display: none;
+}

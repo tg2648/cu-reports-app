@@ -1,0 +1,35 @@
+{%- extends "base.html" %}
+{%- block title %}Lab Occupancy Form{%- endblock title %}
+{%- block content %}
+<div>
+    <div class="cognito">
+        <script src="{{url}}"></script>
+        <script>Cognito.load("forms", {id: "1", entry: { "UNI": "{{uni}}"}});</script>
+    </div>
+
+    {# Display existing records as a table #}
+    {% if records %}
+    <div style="max-width: 800px; margin: 0 auto; font-size: smaller;" class="mb-5">
+        <h5 class="text-info my-4">Recorded timestamps:</h3>
+        <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Timestamp</th>
+                <th scope="col">Action</th>
+                <th scope="col">Room(s)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in records %}
+              <tr>
+                <th scope="row">{{ r['timestamp'] | datetime_utc_to_est }}</th>
+                <td>{{ r['action'] }}</td>
+                <td>{{ r['room'] }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+    {% endif %}
+</div>
+{%- endblock %}
