@@ -16,7 +16,7 @@ from app.extensions import dynamo
 
 from app.deptprofile.utils.styling import axes, margin
 from app.deptprofile.utils.colors import enrollments_colors, classes_colors
-from app.deptprofile.utils.years import MAX_YEAR_ID, MAX_FISCAL_YEAR, make_academic_year_range
+from app.deptprofile.utils.years import YEARS, MAX_YEAR_ID, MAX_FISCAL_YEAR, make_academic_year_range
 
 from app.deptprofile.layouts.classes import classes_group, enrollments_group
 
@@ -24,11 +24,11 @@ from app.deptprofile.layouts.classes import classes_group, enrollments_group
 tenure_categories = {
     'Tenured': 'Tenured',
     'NTBOT': 'NTBOT',
+    'NTBOT-professor-term': 'Term Asst. Prof.',
     'Lecturer': 'Lecturer',
     'Supplemental': 'Other Full-Time',
     'Part-time': 'Adjunct',
     'Graduate-student': 'Graduate St.',
-    'NTBOT-professor-term': 'Term Asst. Prof.',
 }
 
 
@@ -159,6 +159,51 @@ def register_classes_callbacks(dashapp):
                 title='Number of Classes',
             ),
             legend={'traceorder': 'normal'},
+            margin=margin(),
+        )
+
+        return {'data': chart_data, 'layout': chart_layout}
+
+    @dashapp.callback(Output('classes-tree-chart', 'figure'),
+                      [Input('dept-dropdown', 'value'),
+                       Input('classes-tree-chart-slider', 'value')])
+    def update_classes_tree_chart(dept, slider_year):
+
+        chart_year = YEARS.get(slider_year).academic
+        data_year = YEARS.get(slider_year).fiscal
+
+        resp = table.query(
+            KeyConditionExpression='PK = :pk AND SK BETWEEN :lower AND :upper',
+            ExpressionAttributeValues={
+                ':pk': f'DEPT#{dept}',
+                ':lower': f'DATA#AGG#CLASSES#{data_year}',
+                ':upper': f'DATA#AGG#CLASSES#{int(data_year) + 1}$',
+            },
+            ProjectionExpression='#c, ten_stat',
+            ExpressionAttributeNames={'#c': 'count'},
+            ScanIndexForward=True,
+        )
+
+        data = resp['Items']
+
+        labels, parents, values = [], [], []
+        for data_cat, chart_cat in tenure_categories.items():
+            labels.append(chart_cat)
+            parents.append(chart_year)
+            value = [int(float(item.get('count'))) for item in data if item.get('ten_stat') == data_cat]
+            values.append(value[0])
+
+        chart_data = []
+        chart_data.append(
+            go.Treemap(
+                labels=labels,
+                parents=parents,
+                values=values,
+                texttemplate='%{label}<br>%{percentRoot} (%{value})',
+            )
+        )
+
+        chart_layout = go.Layout(
             margin=margin(),
         )
 
