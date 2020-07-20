@@ -2,10 +2,8 @@
 
 {%- block content %}
 <div class="page-header">
-
-  <h2 class="text-info mt-4">Welcome</h2>
-
-  <div class="row mt-3">
+   
+  <!-- <div class="row mt-3">
     <div class="col-md">
       <ul style="padding-left: 7px; list-style-position: inside;">
         <li>All pages require UNI authentication.</li>
@@ -23,11 +21,6 @@
           <li>Michael Stanish (A&S IT) for invaluable technical support and guidance</li>
           <li>CUIT for web hosting and CAS support</li>
           <li>Open-source community {#(<a href="https://www.palletsprojects.com/p/flask/" target="_blank">Flask</a> project in particular)</li>#}
-          {#
-          <!-- <li>Nathan Colbert (QMSS '18)</li> -->
-          <!-- <li>Office of Equal Opportunity and Affirmative Action</li>
-          <li>Office of the Vice Provost for Faculty Advancement</li> -->
-          #}
         </ul>
       </small>
     </div>
@@ -52,6 +45,14 @@
             </p>
           </a>
           #}
+          <a href="/faculty_governance/" class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1 text-info">Faculty Governance</h5>
+            </div>
+            <p class="mb-1">
+              Repository of committee reports, faculty meeting minutes, letters, etc.
+            </p>
+          </a>
           <a href="/searchcom/" class="list-group-item list-group-item-action flex-column align-items-start">
             <div class="d-flex w-100 justify-content-between">
               <h5 class="mb-1 text-info">Search Committee Dashboard</h5>
@@ -71,7 +72,57 @@
           </a>   
       </div>
     </div>
+
+    
+  </div> -->
+  
+  <h3 class="text-info mt-3">Welcome</h3>
+
+  
+  <div class="row mt-3 reverse-order-mobile">
+    <div class="col">
+
+    <h5 class="text-info">At a glance</h5>
+    <div id="chart"></div>
+      
+    </div>
+    
+    <div class="col-md-auto">
+      <h5 class="nav-primary-title">Navigation</h5>
+
+      <nav class="nav-primary">
+        <ul>
+          <li><a href="faculty_governance">Faculty Governance</a></li>
+          <li><a href="{{ url_for('fif_archive.index') }}">FIF Archive</a></li>
+          <li><a href="{{ url_for('lab_occupancy.index') }}">Lab Occupancy Form</a></li>
+        </ul>
+      </nav>
+
+      <h6 class="nav-primary-subtitle">Dashboards</h6>
+
+      <nav class="nav-primary">
+        <ul>
+          <li><a href="searchcom">Search Committee</a></li>
+          <li><span class="text-muted" style="font-size: 1.1em;">Department/Diversity (coming soon&trade;)</span></li>
+          <!-- <li><a>Department/Diversity (coming soon&trade;)</a></li> -->
+        </ul>
+      </nav>
+      
+      <nav class="nav-secondary">
+        <ul>
+          <li><a href="{{ url_for('main.about') }}">About</a></li>
+          <li><a href="{{ url_for('main.help') }}">Help</a></li>
+        </ul>
+      </nav>
+    </div>
   </div>
 
 </div>
+
+{%- if config['ENV'] == 'prod' %}
+<script src="https://cu-dash-static.s3.us-east-2.amazonaws.com/scripts/chart.js"></script>
+{%- else -%}
+<script src="{{ url_for('static', filename='chart.js') }}"></script>
+{%- endif %}
+
 {%- endblock %}
