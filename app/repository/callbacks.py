@@ -18,161 +18,120 @@ def register_repository_callbacks(dashapp):
 
     table = dynamo.tables[current_app.config['DB_REPOSITORY']]
 
-
-    @dashapp.callback(Output('page-url', 'children'),
-                      [Input('url', 'pathname'),
-                       Input('url', 'search'),
-                       Input('url', 'hash')])
-    def display_page(pathname, search, url_hash):
-
-        return html.Div([
-            html.H5('pathname: {}'.format(pathname)),
-            html.H5('search: {}'.format(search)),
-            html.H5('url_hash: {}'.format(url_hash))
-        ])
-
     # FILE LIST - LEFT
 
-    @dashapp.callback(Output('file-list-left', 'children'),
-                      [Input('url', 'pathname'),
-                       Input('unit-input', 'value'),
+    @dashapp.callback([Output('file-list-left', 'children'),
+                       Output('file-list-right', 'children')],
+                      [Input('unit-input', 'value'),
                        Input('year-input', 'value')])
-    def committee_list_by_committee(url_pathname, unit, year):
+    def display_lists(unit, year):
+        """Outputs two divs using the helper CommitteeFiles files: one where the files are grouped by committee,
+        and one where files are grouped by year
 
-        if (url_pathname is None) or (url_pathname == ''):
-            raise PreventUpdate
+        Args:
+            unit (str): Value of the unit-input radio buttons
+            year (str): Value of the year-input radio buttons
 
-        # By default, render the committee list
-        if (url_pathname == '/faculty_governance/' or 'committees' in url_pathname):
+        Returns:
+            dash_html_components.html.Div: Description.
+        """
 
-            column_title = 'By committee'
+        #  Since we can't initialize an empty filter, start with a 'dummy' that's always true
+        filter_expr = Attr('PK').exists()
 
-            if (unit == '' or unit is None) and (year == '' or year is None):
+        if not (unit == '' or unit is None):
+            filter_expr = filter_expr & Attr('PK').eq(unit)
 
-                resp = table.query(
-                    IndexName='ByCategory',
-                    KeyConditionExpression='category = :category',
-                    ExpressionAttributeValues={':category': 'committees'},
-                    ScanIndexForward=False,
-                )
+        if not (year == '' or year is None):
+            filter_expr = filter_expr & Attr('year').eq(year)
 
-            else:
+        resp = table.scan(FilterExpression=filter_expr)
 
-                resp = table.query(
-                    KeyConditionExpression=Key('PK').eq(unit),
-                    ScanIndexForward=False,
-                )
+        # if (unit == '' or unit is None):
 
-        elif ('minutes' in url_pathname):
+        #     if (year == '' or year is None):
+        #         resp = table.query(
+        #             IndexName='ByCategory',
+        #             KeyConditionExpression='category = :category',
+        #             ExpressionAttributeValues={':category': 'committees'},
+        #             ScanIndexForward=False,
+        #         )
+        #     else:
+        #         resp = table.query(
+        #             IndexName='ByCategory',
+        #             KeyConditionExpression='category = :category',
+        #             ExpressionAttributeValues={':category': 'committees'},
+        #             FilterExpression=Attr('year').eq(year),
+        #             ScanIndexForward=False,
+        #         )           
 
-            column_title = 'By meeting'
+        # else:
 
-            if (unit == [] or unit is None):
-
-                resp = table.query(
-                    IndexName='ByCategory',
-                    KeyConditionExpression='category = :category',
-                    ExpressionAttributeValues={':category': 'minutes'},
-                    ScanIndexForward=False,
-                )
-
-            else:
-
-                resp = table.query(
-                    IndexName='ByYear',
-                    KeyConditionExpression='#year = :year',
-                    FilterExpression='category = :category',
-                    ExpressionAttributeNames={'#year': 'year'},
-                    ExpressionAttributeValues={':year': '2019', ':category': 'minutes'},
-                    ScanIndexForward=False,
-                )
+        #     if (year == '' or year is None):
+        #         resp = table.query(
+        #             KeyConditionExpression=Key('PK').eq(unit),
+        #             ScanIndexForward=False,
+        #         )
+        #     else:
+        #         resp = table.query(
+        #             KeyConditionExpression=Key('PK').eq(unit),
+        #             FilterExpression=Attr('year').eq(year),
+        #             ScanIndexForward=False,
+        #         )
 
         items = resp['Items']
         files = CommitteeFiles(items=items)
 
-        div = html.Div([html.H6(column_title, className='text-info'), files.file_list(groupby='committee')])
+        div_left = html.Div([html.H6('By committee', className='text-info'), files.file_list(groupby='committee')])
+        div_right = html.Div([html.H6('By year', className='text-info'), files.file_list(groupby='year')])
 
-        return div
+        return div_left, div_right
 
     # FILE LIST - RIGHT
 
-    @dashapp.callback(Output('file-list-right', 'children'),
-                      [Input('url', 'hash'),
-                       Input('url', 'pathname'),])
-    def committee_list_by_year(url_hash, url_pathname):
+    # @dashapp.callback(Output('file-list-right', 'children'),
+    #                   [Input('unit-input', 'value'),
+    #                    Input('year-input', 'value')])
+    # def committee_list_by_year(unit, year):
 
-        if (url_pathname is None) or (url_pathname == ''):
-            raise PreventUpdate
+    #     if (unit == '' or unit is None):
 
-        # By default, render the committee list
-        if (url_pathname == '/faculty_governance/' or 'committees' in url_pathname):
+    #         if (year == '' or year is None):
+    #             resp = table.query(
+    #                 IndexName='ByCategory',
+    #                 KeyConditionExpression='category = :category',
+    #                 ExpressionAttributeValues={':category': 'committees'},
+    #                 ScanIndexForward=False,
+    #             )
+    #         else:
+    #             resp = table.query(
+    #                 IndexName='ByCategory',
+    #                 KeyConditionExpression='category = :category',
+    #                 ExpressionAttributeValues={':category': 'committees'},
+    #                 FilterExpression=Attr('year').eq(year),
+    #                 ScanIndexForward=False,
+    #             )           
 
-            if (url_hash is None) or (url_hash == ''):
+    #     else:
 
-                resp = table.query(
-                    IndexName='ByCategory',
-                    KeyConditionExpression='category = :category',
-                    ExpressionAttributeValues={':category': 'committees'},
-                    ScanIndexForward=False,
-                )
+    #         if (year == '' or year is None):
+    #             resp = table.query(
+    #                 KeyConditionExpression=Key('PK').eq(unit),
+    #                 ScanIndexForward=False,
+    #             )
+    #         else:
+    #             resp = table.query(
+    #                 KeyConditionExpression=Key('PK').eq(unit),
+    #                 FilterExpression=Attr('year').eq(year),
+    #                 ScanIndexForward=False,
+    #             )
 
-            else:
+    #     items = resp['Items']
+    #     files = CommitteeFiles(items=items)
 
-                resp = table.query(
-                    IndexName='ByYear',
-                    KeyConditionExpression='#year = :year',
-                    ExpressionAttributeNames={'#year': 'year'},
-                    ExpressionAttributeValues={':year': '2019'},
-                    ScanIndexForward=False,
-                )
+    #     div = html.Div([html.H6('By year', className='text-info'), files.file_list(groupby='year')])
 
-        elif ('minutes' in url_pathname):
-
-            if (url_hash is None) or (url_hash == ''):
-
-                resp = table.query(
-                    IndexName='ByCategory',
-                    KeyConditionExpression='category = :category',
-                    ExpressionAttributeValues={':category': 'minutes'},
-                    ScanIndexForward=False,
-                )
-
-            else:
-
-                resp = table.query(
-                    IndexName='ByYear',
-                    KeyConditionExpression='#year = :year',
-                    FilterExpression='category = :category',
-                    ExpressionAttributeNames={'#year': 'year'},
-                    ExpressionAttributeValues={':year': '2019', ':category': 'minutes'},
-                    ScanIndexForward=False,
-                )
-
-        items = resp['Items']
-        files = CommitteeFiles(items=items)
-
-        div = html.Div([html.H6('By year', className='text-info'), files.file_list(groupby='year')])
-
-        return div
-
-    # BUTTONS
-
-    @dashapp.callback([Output('committee-button', 'className'),
-                       Output('minutes-button', 'className')],
-                      [Input('url', 'pathname')])
-    def button_color(url_pathname):
-        """
-        Simulate the effect of being 'active' on selection
-        """
-
-        if (url_pathname is None) or (url_pathname == ''):
-            raise PreventUpdate
-
-        # Committees is default
-        if 'minutes' in url_pathname:
-            return None, 'text-info'
-        else:
-            return 'text-info', None
+    #     return div
 
     # NAVBAR #
     # Navbar Collapse Toggle

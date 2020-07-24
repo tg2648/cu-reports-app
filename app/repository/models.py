@@ -38,8 +38,8 @@ class CommitteeFiles(object):
         Grouping by committee produces:
 
         "PPC": {
-                "2019": [["Report 1", "PPC/abc.pdf"],
-                         ["Report 2", "PPC/abc2.pdf"]],
+                "2019": [html.Li(html.A(...)),
+                         html.Li(html.A(...))],
                 "2019": [...],
                 "2018": [...],
             }
@@ -82,8 +82,8 @@ class CommitteeFiles(object):
         Converts this:
 
             "PPC": {
-                    "2019": [["Report 1", "PPC/abc.pdf"],
-                            ["Report 2", "PPC/abc2.pdf"]],
+                    "2019": [html.Li(html.A(...)),
+                            html.Li(html.A(...))],
                     "2019": [...],
                     "2018": [...],
                 }
@@ -91,13 +91,14 @@ class CommitteeFiles(object):
         Into this:
 
             Div([
-                P(children='PPC'),
-                Ul(children=[
-                    Span(children='2019'),
-                    Li(children=A(...),
-                    Span(children='2018'),
-                    Li(children=A(...),
-                ]
+                P('PPC'),
+                Ul(
+                    [
+                        Span('2019'),
+                        Li(A(...)),
+                        Span('2018'),
+                        Li(A(...)),
+                    ]
             ])
 
         Args:

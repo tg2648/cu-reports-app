@@ -35,12 +35,12 @@ def serve_repository_layout():
     layout = html.Div(
         [
             serve_navbar(),
-            dcc.Location(id='url', refresh=False),
+            # dcc.Location(id='url', refresh=False),
             html.Div(
                 [
                     header,
                     file_list,
-                    html.Div(id='page-url')
+                    # html.Div(id='page-url')
                 ],
                 className="container pb-5",
             ),
