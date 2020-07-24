@@ -63,6 +63,7 @@ class ProdConfig(Config):
     DB_SEARCHCOM_SUBFIELDS = os.getenv('DB_SEARCHCOM_SUBFIELDS_PROD')
     DB_LAB_OCCUPANCY = os.getenv('DB_LAB_OCCUPANCY_PROD')
     DB_DEPTPROFILE = os.getenv('DB_DEPTPROFILE_PROD')
+    DB_REPOSITORY = os.getenv('DB_REPOSITORY_PROD')
 
 
 class DevConfig(Config):
@@ -81,3 +82,4 @@ class DevConfig(Config):
     DB_SEARCHCOM_SUBFIELDS = os.getenv('DB_SEARCHCOM_SUBFIELDS_DEV')
     DB_LAB_OCCUPANCY = os.getenv('DB_LAB_OCCUPANCY_DEV')
     DB_DEPTPROFILE = os.getenv('DB_DEPTPROFILE_DEV')
+    DB_REPOSITORY = os.getenv('DB_REPOSITORY_DEV')
