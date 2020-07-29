@@ -192,8 +192,10 @@ def register_blueprints(server):
     from app.views import fif_archive
     from app.views import fif_changelog
     from app.views import lab_occupancy
+    from app.views import scheduler
 
     server.register_blueprint(home.bp)
     server.register_blueprint(lab_occupancy.bp)
     server.register_blueprint(fif_archive.bp)
     server.register_blueprint(fif_changelog.bp)
+    server.register_blueprint(scheduler.bp)

@@ -1,0 +1,149 @@
+{%- extends "base.html" %}
+{%- block title %}Room Scheduler{%- endblock title %}
+
+{%- block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='calendar.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5/main.min.css">
+    {{ super() }}
+{%- endblock %}
+
+{%- block content %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            // themeSystem: 'standard',
+            aspectRatio: 2,
+            editable: true,
+            selectable: true,
+            nowIndicator: true,
+            themeSystem: 'bootstrap',
+            timeZone: 'local',
+            headerToolbar: {
+                left: 'today prev,next',
+                center: 'title',
+                right: 'resourceTimelineDay,resourceTimelineWeek'
+            },
+            initialView: 'resourceTimelineDay',
+            resourceAreaHeaderContent: 'Room',
+            resourceGroupField: 'room',
+            // resourcesInitiallyExpanded: false,
+            resourceAreaWidth: '15%',
+            resources: {
+				url: 'resource_data',
+			},
+			events: {
+				url: 'event_data',
+			},
+            eventOverlap: false,
+
+            eventDrop: function(info) {  // Triggered when dragging stops and the event has moved to a different day/time.
+                alert(info.event.title + " was dropped on " + info.event.start.toISOString());
+
+                if (info.oldResource) {
+                    payload = {
+                        title: info.event.title,
+                        start: info.event.startStr,
+                        end: info.event.endStr,
+                        oldResourceId: info.oldResource.id,
+                        newResourceId: info.newResource.id,
+                    }
+                } else {
+                    payload = {
+                        title: info.event.title,
+                        start: info.event.startStr,
+                        end: info.event.endStr,
+                    }
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    url: ('event_drop'),
+                    contentType: 'application/json;charset=UTF-8',
+                    data: JSON.stringify(payload),
+                    // success: function (data) {
+                    //     alert(data);
+                    // },
+                    error: function (xhr, status, error) {
+                        alert(xhr.responseText);
+                        info.revert();
+                    },
+                });
+
+            },
+
+            select: function(info) {  // Triggered when a date/time selection is made.
+                alert('selected ' + info.startStr + ' to ' + info.endStr + ' on resource ' + info.resource.id);
+
+                $.ajax({
+                    type: 'POST',
+                    url: ('event_selection'),
+                    contentType: 'application/json;charset=UTF-8',
+                    data: JSON.stringify({
+                        start: info.startStr,
+                        end: info.endStr,
+                        resourceId: info.resource.id,
+                    }),
+
+                    success: function (data) {
+                        // Refresh calendar on success
+                        calendar.refetchEvents();
+                    },
+
+                    error: function (xhr, status, error) {
+                        alert(xhr.responseText);
+                    },
+
+                });
+
+            },
+
+            eventDidMount: function(info) {
+                $(info.el).append("<span class='calendar-removebtn'>x</span>");
+                console.log($(info.el).find(".calendar-removebtn"));
+                // $(info.el).find("span").click(function() {
+                //     // $('#calendar').fullCalendar('removeEvents',event._id);
+                //     console.log("test");
+                //     alert('Button clicked');
+
+                // });
+                $(info.el).find(".calendar-removebtn").on('click', function () {
+                    alert('Button clicked');
+                });
+            },
+
+            // $(info.el).append("<span class='fa fa-times-circle calendar-removebtn'></span>");
+            // eventMouseEnter: function(info) {
+            //     $(info.el).append("<span class='removebtn'>X</span>");
+            //     console.log($(info.el).find("span"));
+            //     $(info.el).find("span").click(function() {
+            //         // $('#calendar').fullCalendar('removeEvents',event._id);
+            //         console.log("test");
+            //         alert('Button clicked');
+            //     });
+            // },
+
+        //     eventMouseLeave: function(info) {
+        //         $(info.el).find(".removebtn").remove();
+        //     }
+
+        });
+
+
+        calendar.render();
+    });
+
+</script>
+
+<div class="row mt-4">
+    <!-- <div class="col-sm-2">Test</div> -->
+    <div class="col" id="calendar"></div>
+</div>
+{%- endblock %}
+
+{%- block scripts %}
+    {{ super() }}
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5/main.min.js"></script>
+{%- endblock %}
+
