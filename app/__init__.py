@@ -91,7 +91,7 @@ def register_dashapp(app, title, base_pathname, serve_layout, register_callbacks
             __name__,
             server=app,
             url_base_pathname=f'/{base_pathname}/',
-            assets_folder=f'{get_root_path(__name__)}/assets/',
+            assets_folder=f'{get_root_path(__name__)}/dash_assets/',
             external_stylesheets=[dbc.themes.CERULEAN]
         )
 
