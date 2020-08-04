@@ -3,19 +3,11 @@
 
 # Third party imports
 from flask import Blueprint
-from flask import render_template
 from flask import Response
-from flask import request
-from flask import redirect
-from flask import url_for
 from flask import current_app
-from flask import abort
 from flask_cas import login_required
 
-from itsdangerous.exc import BadSignature
-
 # Local application imports
-from app.users import User
 from app.utils.jinja_filters import file_name, file_type
 from app.logger import DynamoAccessLogger
 from app.errors.handlers import NotFoundError
