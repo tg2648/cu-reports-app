@@ -145,7 +145,7 @@ def register_dashapp(app, title, base_pathname, serve_layout, register_callbacks
         register_callbacks(my_dashapp)
 
     # Require login to access Dash pathnames
-    # _protect_dashviews(my_dashapp)
+    _protect_dashviews(my_dashapp)
 
 
 def _protect_dashviews(dashapp):

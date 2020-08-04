@@ -43,6 +43,7 @@ class Config(object):
     )
     FIF_FILES_BUCKET = os.getenv('FIF_BUCKET_NAME')
     TEMPLATES_BUCKET = os.getenv('TEMPLATES_BUCKET_NAME')
+    REPOSITORY_BUCKET = os.getenv('REPOSITORY_BUCKET_NAME')
 
     FORM_URL = os.getenv('FORM_URL')
 

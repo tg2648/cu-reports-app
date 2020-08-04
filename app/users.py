@@ -142,6 +142,24 @@ class User(object):
         else:
             return False
 
+    def facgov_access(self):
+        """
+        Get details about user's access to the Faculty Governance page
+        Returns:
+            - If user has access: True
+            - If user does not have access (either not in DB or no admin access): False
+        """
+        if (has_request_context() and 'CAS_USERNAME' in session) or (self._uni is not None):
+
+            try:
+                response = dynamo.tables[self.user_table_name].get_item(Key={'UNI': self.uni})
+                return response['Item']['facgov']
+            except KeyError:
+                return False
+
+        else:
+            return False
+
 
 class UserBatch(object):
     """DynamoDB interface to query the users table. Batch user operations.
