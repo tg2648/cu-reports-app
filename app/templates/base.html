@@ -28,7 +28,6 @@ gtag('config', 'UA-145333546-1');
 {%- else -%}
 <link rel="stylesheet" href="{{ url_for('static', filename='00_home.css') }}">
 {%- endif %}
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 {%- endblock head %}
 </head>
 
@@ -46,59 +45,17 @@ gtag('config', 'UA-145333546-1');
 
     <div class="collapse navbar-collapse" id="navbarColor02">
 
-        <!-- <ul class="navbar-nav mr-auto">
+        {% if not 'CAS_USERNAME' in session %}
+            <form class="form-inline my-2 my-lg-0 ml-auto" action="{{ url_for('cas.login') }}">
+                <button class="btn btn-secondary my-2 my-sm-0">Login</button>
+            </form>
+        {% else %}
+            <span class="navbar-text ml-auto">Signed in as {{ session.CAS_USERNAME }} </span>
+            <form class="form-inline my-2 my-lg-0" action="{{ url_for('cas.logout') }}">
+                <button class="btn btn-secondary my-2 ml-2 my-sm-0">Logout</button>
+            </form>
+        {% endif %}
 
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('lab_occupancy.index') }}">Lab Occupancy Form</a>
-            </li>
-
-                <div style="border-left:1px solid rgba(255,255,255,0.5)"></div>
-
-            {#
-            <li class="nav-item">
-                <a class="nav-link" href="/deptprofile/">Dept. Profile</a>
-            </li>
-            #}
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('repository.index') }}">Document Repository</a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="/searchcom/">Search Dashboard</a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('fif_archive.index') }}">FIF Archive</a>
-            </li>
-            {#
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-                    FIF
-                </a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="/fif/">FIF Dashboard</a>
-                    <a class="dropdown-item" href="{{ url_for('fif_archive.index') }}">FIF Archive</a>
-                </div>
-            </li>    
-            #}
-        </ul> -->
-
-        <div class="ml-auto">
-            {% if not 'CAS_USERNAME' in session %}
-                <form class="form-inline my-2 my-lg-0" action="{{ url_for('cas.login') }}">
-                    <button class="btn btn-secondary my-2 my-sm-0">Login</button>
-                </form>
-            {% else %}
-                <span class="navbar-text">
-                    Signed in as {{ session.CAS_USERNAME }} 
-                </span>
-                <form class="form-inline my-2 my-lg-0" action="{{ url_for('cas.logout') }}">
-                    <button class="btn btn-secondary my-2 ml-2 my-sm-0">Logout</button>
-                </form>
-            {% endif %}
-        </div>
- 
     </div>
 </div>
 </nav>

@@ -112,10 +112,9 @@
 
 </div>
 
-{%- if config['ENV'] == 'prod' %}
-<script src="https://cu-dash-static.s3.us-east-2.amazonaws.com/scripts/chart.js"></script>
-{%- else -%}
-<script src="{{ url_for('static', filename='chart.js') }}"></script>
-{%- endif %}
-
+{%- block scripts %}
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  {{ super() }}
+  <script src="{{ url_for('static', filename='chart.js') }}"></script>
+{%- endblock %}
 {%- endblock %}
