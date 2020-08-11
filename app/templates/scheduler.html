@@ -8,7 +8,7 @@
 {%- endblock %}
 
 {%- block content %}
-<div class="my-4">Drag on the calendar to create a reservation for yourself. The title of your reservation will be your UNI, visible to all graduate students. Drag or resize an existing reservation to modify it. To delete an event, see the table at the bottom of the page.</div>
+<div class="my-4">Click and drag on the calendar to create a reservation for yourself. The title of your reservation will be your UNI, visible to all graduate students. Drag or resize an existing reservation to modify it. To delete an event, see the table at the bottom of the page.</div>
 
 <script>
 
@@ -180,10 +180,10 @@
             },
 
             select: function(info) {  // Triggered when a date/time selection is made.
-                
+
                 // Check if the selected event overlaps with any existing events in the same resource
                 if (isOverlapping(info.resource.getEvents(), info)) {
-                    alert('Events cannot overlap.')
+                    alert('Cannot overlap with other reservations or blocked off times.')
                 } else {
 
                     const startTime = new Date(info.startStr).toLocaleString()
@@ -214,6 +214,7 @@
 
                             success: function (data) {
                                 // Refresh calendar on success
+                                // Can also reload page with location.reload(); if the reservation history needs to be refreshed
                                 calendar.refetchEvents();
                             },
 
@@ -223,6 +224,8 @@
 
                         });
 
+                    } else {
+                        calendar.refetchEvents();
                     }
                 }
             },
@@ -294,8 +297,8 @@
             <th scope="row" {% if not e['active'] %} class='text-muted font-italic' {% endif %}>{{ e['resourceName'] }}</th>
             <td {% if not e['active'] %} class='text-muted font-italic' {% endif %}>{{ e['start'] | datetime_utc_to_est }}</td>
             <td {% if not e['active'] %} class='text-muted font-italic' {% endif %}>{{ e['end'] | datetime_utc_to_est }}</td>
+            {% if e['active'] %}
             <td class="text-center">
-                {% if e['active'] %}
                 <form class="download-form" action="{{ url_for('scheduler.event_delete') }}" method="POST">
                     <input type="hidden" name="PK" value="{{ e['PK'] | serialize }}">
                     <input type="hidden" name="SK" value="{{ e['SK'] | serialize }}">
@@ -303,8 +306,10 @@
                       <i class="fa fa-trash-o fa-lg"></i>
                     </button>
                 </form>
-                {% endif %}
             </td>
+            {% else %}
+            <td class="text-center text-muted font-italic">Deleted</td>
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>

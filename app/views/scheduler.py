@@ -217,7 +217,6 @@ def event_select():
     data = request.json
 
     uni = current_user.uni
-    title = f"{uni}'s event"
 
     item = {
         'PK': 'EVENT',
@@ -226,7 +225,7 @@ def event_select():
         'end': data.get('end'),
         'resourceId': data.get('resourceId'),
         'resourceName': data.get('resourceName'),
-        'title': title,
+        'title': uni,
         'uni': uni,
         'active': True,
         'createdOn': get_timestamp(),
