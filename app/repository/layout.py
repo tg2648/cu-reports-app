@@ -35,7 +35,7 @@ def serve_repository_layout():
     current_user = User()
 
     # Check access, no access if an empty list is returned from a User class
-    if current_user.facgov_access():
+    if current_user.has_facgov_access():
 
         logger.log_access(has_access=True)
 

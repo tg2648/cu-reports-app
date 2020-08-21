@@ -11,12 +11,12 @@ import dash_html_components as html
 # Local application imports
 from app.extensions import dynamo
 from app.utils.func import multisort
+from app.repository.conversions import convert_for_checkbox
 
 
 def build_unit_options():
     """
-    Build checkbox options from unique units across all DB items
-    Display in reverse order
+    Build checkbox options from unique units across all DB items.
     """
     table = dynamo.tables[current_app.config['DB_REPOSITORY']]
     resp = table.scan(
@@ -27,34 +27,33 @@ def build_unit_options():
     items = resp['Items']
     units = sorted({item['unit'] for item in items})
 
-    options = [{'label': 'All', 'value': ''}]
+    options = []
 
-    for unit in reversed(units):
-        options.append({'label': unit, 'value': unit})
-
-    return options
-
-
-def build_year_options():
-    """
-    Build checkbox options from unique years across all DB items
-    Display in reverse order
-    """
-    table = dynamo.tables[current_app.config['DB_REPOSITORY']]
-    resp = table.scan(
-        ProjectionExpression='#attr',
-        ExpressionAttributeNames={'#attr': 'year'}
-    )
-
-    items = resp['Items']
-    units = sorted({item['year'] for item in items})
-
-    options = [{'label': 'All', 'value': ''}]
-
-    for unit in reversed(units):
-        options.append({'label': unit, 'value': unit})
+    for unit in units:
+        options.append({'label': convert_for_checkbox(unit), 'value': unit})
 
     return options
+
+
+# def build_year_options():
+#     """
+#     Build checkbox options from unique years across all DB items. Display in reverse order.
+#     """
+#     table = dynamo.tables[current_app.config['DB_REPOSITORY']]
+#     resp = table.scan(
+#         ProjectionExpression='#attr',
+#         ExpressionAttributeNames={'#attr': 'year'}
+#     )
+
+#     items = resp['Items']
+#     units = sorted({item['year'] for item in items})
+
+#     options = [{'label': 'All', 'value': ''}]
+
+#     for unit in reversed(units):
+#         options.append({'label': unit, 'value': unit})
+
+#     return options
 
 
 def build_search_dropdown():
@@ -76,12 +75,14 @@ def build_search_dropdown():
 
 
 def serve_file_list():
+
+    unit_options = build_unit_options()
     checklist_unit = dbc.FormGroup(
         [
             dbc.Label('Filter', className='h6 text-info'),
             dbc.RadioItems(
-                options=build_unit_options(),
-                value='',
+                options=unit_options,
+                value='PPC',
                 id='unit-input',
             ),
         ]
@@ -90,7 +91,7 @@ def serve_file_list():
     checklist_year = dbc.FormGroup(
         [
             dbc.RadioItems(
-                options=build_year_options(),
+                options=[],
                 value='',
                 id='year-input',
             ),
@@ -108,11 +109,6 @@ def serve_file_list():
 
     col_left = html.Div(
         id='file-list-left',
-        className='col-sm',
-    )
-
-    col_right = html.Div(
-        id='file-list-right',
         className='col-sm',
     )
 
@@ -136,7 +132,6 @@ def serve_file_list():
                     html.Div(
                         [
                             col_left,
-                            col_right
                         ],
                         className='row'
                     )

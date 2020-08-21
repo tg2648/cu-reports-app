@@ -11,6 +11,7 @@ from flask import url_for
 
 # Local application imports
 from app.utils.func import multisort
+from app.repository.conversions import convert_for_heading
 
 
 class CommitteeFiles(object):
@@ -31,7 +32,6 @@ class CommitteeFiles(object):
         """
 
         self.by_committee = self.group(items, by='committee')
-        self.by_year = self.group(items, by='year')
 
     def group(self, items, by=None):
         """
@@ -64,16 +64,16 @@ class CommitteeFiles(object):
         if by == 'committee':
 
             for item in items:
-                committee = item['unit']
+                unit = convert_for_heading(item['unit'])
                 year = item['year']
-                d[committee][year].append(self.make_list_item(item))
+                d[unit][year].append(self.make_list_item(item))
 
         elif by == 'year':
 
             for item in items:
-                committee = item['unit']
+                unit = convert_for_heading(item['unit'])
                 year = item['year']
-                d[year][committee].append(self.make_list_item(item))
+                d[year][unit].append(self.make_list_item(item))
 
         return d
 
@@ -119,15 +119,10 @@ class CommitteeFiles(object):
             dash_html_components.html.Div
         """
 
-        if groupby == 'committee':
-            d = self.by_committee
-        elif groupby == 'year':
-            d = self.by_year
-
         list_div = html.Div([])
 
-        for cat_name, cat in d.items():
-            list_div.children.append(html.P(cat_name, className='text-info font-weight-bold facgov-heading'))
+        for cat_name, cat in self.by_committee.items():
+            list_div.children.append(html.P(cat_name, className='text-info font-weight-bold'))
             ul = html.Ul([], className='pl-0')
 
             for subcat_name, subcat in cat.items():

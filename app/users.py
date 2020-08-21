@@ -142,7 +142,7 @@ class User(object):
         else:
             return False
 
-    def facgov_access(self):
+    def has_facgov_access(self):
         """
         Get details about user's access to the Faculty Governance page
         Returns:

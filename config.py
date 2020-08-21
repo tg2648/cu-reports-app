@@ -43,7 +43,6 @@ class Config(object):
     )
     FIF_FILES_BUCKET = os.getenv('FIF_BUCKET_NAME')
     TEMPLATES_BUCKET = os.getenv('TEMPLATES_BUCKET_NAME')
-    REPOSITORY_BUCKET = os.getenv('REPOSITORY_BUCKET_NAME')
 
     FORM_URL = os.getenv('FORM_URL')
 
@@ -65,6 +64,7 @@ class ProdConfig(Config):
     DB_LAB_OCCUPANCY = os.getenv('DB_LAB_OCCUPANCY_PROD')
     DB_DEPTPROFILE = os.getenv('DB_DEPTPROFILE_PROD')
     DB_REPOSITORY = os.getenv('DB_REPOSITORY_PROD')
+    REPOSITORY_BUCKET = os.getenv('REPOSITORY_BUCKET_NAME_PROD')
 
 
 class DevConfig(Config):
@@ -84,3 +84,4 @@ class DevConfig(Config):
     DB_LAB_OCCUPANCY = os.getenv('DB_LAB_OCCUPANCY_DEV')
     DB_DEPTPROFILE = os.getenv('DB_DEPTPROFILE_DEV')
     DB_REPOSITORY = os.getenv('DB_REPOSITORY_DEV')
+    REPOSITORY_BUCKET = os.getenv('REPOSITORY_BUCKET_NAME_DEV')

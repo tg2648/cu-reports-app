@@ -19,8 +19,7 @@ def register_repository_callbacks(dashapp):
 
     table = dynamo.tables[current_app.config['DB_REPOSITORY']]
 
-    @dashapp.callback([Output('file-list-left', 'children'),
-                       Output('file-list-right', 'children')],
+    @dashapp.callback(Output('file-list-left', 'children'),
                       [Input('unit-input', 'value'),
                        Input('year-input', 'value')])
     def display_lists(unit, year):
@@ -36,23 +35,40 @@ def register_repository_callbacks(dashapp):
         """
 
         #  Since we can't initialize an empty filter, start with a 'dummy' that's always true
-        filter_expr = Attr('key').exists()
+        # filter_expr = Attr('key').exists()
 
-        if not (unit == '' or unit is None):
-            filter_expr = filter_expr & Attr('unit').eq(unit)
+        # if not (unit == '' or unit is None):
+        #     filter_expr = filter_expr & Attr('unit').eq(unit)
+
+        # if not (year == '' or year is None):
+        #     filter_expr = filter_expr & Attr('year').eq(year)
+
+        # resp = table.scan(FilterExpression=filter_expr)
+
+        key_expr = '#u = :u'
+        expr_values = {
+            ':u': unit
+        }
+        expr_names = {
+            '#u': 'unit'
+        }
 
         if not (year == '' or year is None):
-            filter_expr = filter_expr & Attr('year').eq(year)
+            key_expr = f'{key_expr} AND #y = :y'
+            expr_values[':y'] = year
+            expr_names['#y'] = 'year'
 
-        resp = table.scan(FilterExpression=filter_expr)
+        resp = table.query(
+            IndexName='unit-year-index',
+            KeyConditionExpression=key_expr,
+            ExpressionAttributeValues=expr_values,
+            ExpressionAttributeNames=expr_names,
+        )
 
         items = resp['Items']
         files = CommitteeFiles(items=items)
 
-        div_left = html.Div([html.H5('By committee', className='text-info'), files.file_list(groupby='committee')])
-        div_right = html.Div([html.H5('By year', className='text-info'), files.file_list(groupby='year')])
-
-        return div_left, div_right
+        return files.file_list(groupby='committee')
 
     # SEARCH #
     @dashapp.callback(Output('facgov-url', 'pathname'),
@@ -62,6 +78,36 @@ def register_repository_callbacks(dashapp):
             raise PreventUpdate
         else:
             return url_for('repository.download', key=value)
+
+    # YEAR CHECKBOXES #
+    @dashapp.callback(Output('year-input', 'options'),
+                      [Input('unit-input', 'value')])
+    def build_year_options(unit):
+        """
+        Populate year checkboxes based on the selected unit.
+        Needed to be done in a callback because not all units have files for all years.
+        """
+        table = dynamo.tables[current_app.config['DB_REPOSITORY']]
+        resp = table.query(
+            IndexName='unit-year-index',
+            KeyConditionExpression='#u = :u',
+            ExpressionAttributeValues={
+                ':u': unit,
+            },
+            ExpressionAttributeNames={
+                '#u': 'unit',
+            },
+        )
+
+        items = resp['Items']
+        units = sorted({item['year'] for item in items})
+
+        options = [{'label': 'All', 'value': ''}]
+
+        for unit in reversed(units):
+            options.append({'label': unit, 'value': unit})
+
+        return options
 
     # NAVBAR #
     @dashapp.callback(Output('navbar-collapse', 'is_open'),
