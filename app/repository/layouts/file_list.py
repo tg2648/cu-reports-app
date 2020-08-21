@@ -69,7 +69,7 @@ def build_search_dropdown():
     options = []
 
     for item in items:
-        options.append({'label': f"{item['unit']} - {item['year']} - {item['file_name']}", 'value': item['key']})
+        options.append({'label': f"{convert_for_checkbox(item['unit'])} - {item['year']} - {item['file_name']}", 'value': item['key']})
 
     return options
 
