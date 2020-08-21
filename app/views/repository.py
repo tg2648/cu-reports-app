@@ -19,16 +19,15 @@ from app.errors.handlers import NotFoundError, ForbiddenError
 bp = Blueprint('repository', __name__, url_prefix='/faculty_governance')
 
 
-# @login_required
 @bp.route('/<path:key>')
+@login_required
 def download(key):
     """
     Downloads a file from S3 based on the key in the path
     """
     logger = DynamoAccessLogger('facgov_download')
-
     current_user = User()
-    print(key)
+
     # Check access, no access if an empty list is returned from a User class
     if current_user.has_facgov_access():
 
