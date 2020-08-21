@@ -15,18 +15,40 @@ class NotFoundError(ValueError):
     pass
 
 
-@bp.app_errorhandler(404)
-def not_found_handler_404(error):
-    """Generic handling of 404 errors"""
-    message = 'Requested page does not exist.'
-    return render_template('errors/404.html', message=message), 404
+class ForbiddenError(ValueError):
+    """Exception class for 403 errors"""
+    pass
+
+
+# @bp.app_errorhandler(404)
+# def not_found_handler(error):
+#     """Generic handling of 404 errors"""
+#     message = 'Requested page does not exist.'
+#     return render_template('errors/404.html', message=message), 404
 
 
 @bp.app_errorhandler(NotFoundError)
-def not_found_handler_exc(error):
-    """More flexible handling of 404-like errors. Use by raising NotFoundError.
+def not_found_handler_exc(message):
+    """More flexible handling of 404-like errors. Used by raising NotFoundError.
 
     Args:
-        error (str) - Custom message to display
+        message (str) - Custom message to display
     """
-    return render_template('errors/404.html', message=error), 404
+    return render_template('errors/404.html', message=message), 404
+
+
+# @bp.app_errorhandler(403)
+# def forbidden_handler(error):
+#     """Generic handling of 403 errors"""
+#     message = 'You do not have access to this page. Please reach out to Timur Gulyamov (tg2648) to get access.'
+#     return render_template('errors/403.html', message=message), 403
+
+
+@bp.app_errorhandler(ForbiddenError)
+def forbidden_handler_exc(message):
+    """More flexible handling of 404-like errors. Used by raising ForbiddenError.
+
+    Args:
+        message (str) - Custom message to display
+    """
+    return render_template('errors/403.html', message=message), 403
