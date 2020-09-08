@@ -13,6 +13,7 @@ from boto3.dynamodb.conditions import Attr
 # Local application imports
 from app.extensions import dynamo
 from app.repository.models import CommitteeFiles
+from app.repository.conversions import fiscal_to_academic
 
 
 def register_repository_callbacks(dashapp):
@@ -68,7 +69,7 @@ def register_repository_callbacks(dashapp):
         items = resp['Items']
         files = CommitteeFiles(items=items)
 
-        return files.file_list(groupby='committee')
+        return files.file_list()
 
     # SEARCH #
     @dashapp.callback(Output('facgov-url', 'pathname'),
@@ -100,12 +101,12 @@ def register_repository_callbacks(dashapp):
         )
 
         items = resp['Items']
-        units = sorted({item['year'] for item in items})
+        years = sorted({item['year'] for item in items})
 
         options = [{'label': 'All', 'value': ''}]
 
-        for unit in reversed(units):
-            options.append({'label': unit, 'value': unit})
+        for year in reversed(years):
+            options.append({'label': fiscal_to_academic(year), 'value': year})
 
         return options
 

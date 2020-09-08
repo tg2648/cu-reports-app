@@ -12,6 +12,7 @@ from flask import url_for
 # Local application imports
 from app.utils.func import multisort
 from app.repository.conversions import convert_for_heading
+from app.repository.conversions import fiscal_to_academic
 
 
 class CommitteeFiles(object):
@@ -22,7 +23,6 @@ class CommitteeFiles(object):
 
     Attributes:
         by_committee (dict[dict[list]]): Items grouped by committee
-        by_year (dict[dict[list]]): Items grouped by year
     """
 
     def __init__(self, items):
@@ -31,9 +31,9 @@ class CommitteeFiles(object):
             items items (list[dict]): List of Dynamo items.
         """
 
-        self.by_committee = self.group(items, by='committee')
+        self.by_committee = self.group(items)
 
-    def group(self, items, by=None):
+    def group(self, items):
         """
         Dynamo items are of the form:
         {'key': 'PPC', 'year': '2020', 'file_name': 'abc.pdf', 'key': 'PPC/abc.pdf', ... }
@@ -61,19 +61,10 @@ class CommitteeFiles(object):
 
         d = defaultdict(lambda: defaultdict(lambda: []))
 
-        if by == 'committee':
-
-            for item in items:
-                unit = convert_for_heading(item['unit'])
-                year = item['year']
-                d[unit][year].append(self.make_list_item(item))
-
-        elif by == 'year':
-
-            for item in items:
-                unit = convert_for_heading(item['unit'])
-                year = item['year']
-                d[year][unit].append(self.make_list_item(item))
+        for item in items:
+            unit = convert_for_heading(item['unit'])
+            year = fiscal_to_academic(item['year'])
+            d[unit][year].append(self.make_list_item(item))
 
         return d
 
@@ -88,7 +79,7 @@ class CommitteeFiles(object):
             className='facgov-link'
         )
 
-    def file_list(self, groupby):
+    def file_list(self):
         """
         Converts this:
 
@@ -121,16 +112,33 @@ class CommitteeFiles(object):
 
         list_div = html.Div([])
 
+        # for cat_name, cat in self.by_committee.items():
+        #     list_div.children.append(html.P(cat_name, className='text-info font-weight-bold'))
+        #     ul = html.Ul([], className='pl-0')
+
+        #     for subcat_name, subcat in cat.items():
+        #         ul.children.append(html.Span(html.U(subcat_name)))
+
+        #         for item in subcat:
+        #             ul.children.append(item)
+
+        #     list_div.children.append(ul)
+
         for cat_name, cat in self.by_committee.items():
             list_div.children.append(html.P(cat_name, className='text-info font-weight-bold'))
-            ul = html.Ul([], className='pl-0')
 
             for subcat_name, subcat in cat.items():
-                ul.children.append(html.Span(html.U(subcat_name)))
+                row = html.Div([], className='row')  # Create a row for each subcategory
+                col = html.Div(html.U(subcat_name), className='col-sm-auto')  # First column is the name of the subcategory
+                row.children.append(col)
 
+                ul = html.Ul([], className='pl-0')  # Second column is the list of items
                 for item in subcat:
                     ul.children.append(item)
 
-            list_div.children.append(ul)
+                col = html.Div(ul, className='col')
+                row.children.append(col)
+
+                list_div.children.append(row)
 
         return list_div

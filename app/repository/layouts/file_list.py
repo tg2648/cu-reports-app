@@ -76,12 +76,17 @@ def build_search_dropdown():
 
 def serve_file_list():
 
-    unit_options = build_unit_options()
+    # unit_options = build_unit_options()
     checklist_unit = dbc.FormGroup(
         [
             dbc.Label('Filter', className='h6 text-info'),
             dbc.RadioItems(
-                options=unit_options,
+                options=[
+                    {'label': 'PPC', 'value': 'PPC'},
+                    {'label': 'EPPC', 'value': 'EPPC'},
+                    {'label': 'CED', 'value': 'CED'},
+                    {'label': 'Faculty Meetings', 'value': 'faculty_meeting_minutes'},
+                ],
                 value='PPC',
                 id='unit-input',
             ),
