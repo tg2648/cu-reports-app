@@ -50,10 +50,10 @@ def create_app():
     from app.searchcom.callbacks import register_searchcom_callbacks as searchcom_callbacks
     register_dashapp(server, 'Search Committee Dashboard', 'searchcom', searchcom_layout, searchcom_callbacks)
 
-    # # Register Department Profile dashboard
-    # from app.deptprofile.layout import serve_deptprofile_layout as deptprofile_layout
-    # from app.deptprofile.callbacks import register_deptprofile_callbacks as deptprofile_callbacks
-    # register_dashapp(server, 'Dept. Profile', 'deptprofile', deptprofile_layout, deptprofile_callbacks)
+    # Register Department Profile dashboard
+    from app.deptprofile.layout import serve_deptprofile_layout as deptprofile_layout
+    from app.deptprofile.callbacks import register_deptprofile_callbacks as deptprofile_callbacks
+    register_dashapp(server, 'Dept. Profile', 'deptprofile', deptprofile_layout, deptprofile_callbacks)
 
     return server
 

@@ -129,23 +129,3 @@ header = html.Div(
         title
     ]
 )
-
-# changelog_popup = dbc.Toast(
-#             changelog_text,
-#             id="=changelog-popup",
-#             header="Changelog",
-#             is_open=False,
-#             dismissable=True,
-#             # top: 66 positions the toast below the navbar
-#             style={"position": "fixed", "top": 66, "right": 10, "width": 350},
-#         )
-
-# notes_popup = dbc.Toast(
-#             notes_text,
-#             id="=notes-popup",
-#             header="Notes",
-#             is_open=False,
-#             dismissable=True,
-#             # top: 66 positions the toast below the navbar
-#             style={"position": "fixed", "top": 66, "right": 10, "width": 350},
-#         )

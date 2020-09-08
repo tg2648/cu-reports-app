@@ -17,21 +17,7 @@ def register_deptprofile_callbacks(dashapp):
     register_classes_callbacks(dashapp)
     register_students_callbacks(dashapp)
 
-    ### URL ROUTING ###
-
-    # @dashapp.callback(Output('dept-dropdown', 'value'),
-    #                   [Input('url', 'pathname')],
-    #                   [State('dept-dropdown', 'value')],
-    #                   prevent_initial_call=True)
-    # def set_filter(pathname, value):
-    #     if pathname == dashapp.config.get('url_base_pathname'):
-    #         return value
-    #     else:
-    #         return pathname[-1]
-
-    ### NAVBAR ###
-
-    ## Navbar Collapse Toggle
+    # Navbar Collapse Toggle
     @dashapp.callback(Output('navbar-collapse', 'is_open'),
                       [Input('navbar-toggler', 'n_clicks')],
                       [State('navbar-collapse', 'is_open')])
@@ -40,7 +26,7 @@ def register_deptprofile_callbacks(dashapp):
             return not is_open
         return is_open
 
-    ## Button popups
+    # Button popups
     @dashapp.callback(
         Output('changelog-popup', 'is_open'),
         [Input('changelog-popup-button', 'n_clicks'), Input('close-changelog', 'n_clicks')],

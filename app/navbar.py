@@ -25,7 +25,7 @@ def serve_navbar():
             [
                 dbc.NavItem(dbc.NavLink('Lab Occupancy Form', href='/lab_occupancy/', external_link=True)),
                 html.Div(style={'border-left': '1px solid rgba(255,255,255,0.5)'}),
-                # dbc.NavItem(dbc.NavLink('Dept. Profiles', href='/deptprofile/', external_link=True)),
+                dbc.NavItem(dbc.NavLink('Dept. Profiles', href='/deptprofile/', external_link=True)),
                 dbc.NavItem(dbc.NavLink('Search Dashboard', href='/searchcom/', external_link=True)),
                 dbc.NavItem(dbc.NavLink('FIF Archive', href='/fif_archive/', external_link=True)),
             ],
