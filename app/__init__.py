@@ -55,6 +55,11 @@ def create_app():
     from app.deptprofile.callbacks import register_deptprofile_callbacks as deptprofile_callbacks
     register_dashapp(server, 'Dept. Profile', 'deptprofile', deptprofile_layout, deptprofile_callbacks)
 
+    # Register document repository
+    from app.repository.layout import serve_repository_layout as repository_layout
+    from app.repository.callbacks import register_repository_callbacks as repository_callbacks
+    register_dashapp(server, 'Faculty Governance', 'faculty_governance', repository_layout, repository_callbacks)
+
     return server
 
 
@@ -86,7 +91,7 @@ def register_dashapp(app, title, base_pathname, serve_layout, register_callbacks
             __name__,
             server=app,
             url_base_pathname=f'/{base_pathname}/',
-            assets_folder=f'{get_root_path(__name__)}/assets/',
+            assets_folder=f'{get_root_path(__name__)}/dash_assets/',
             external_stylesheets=[dbc.themes.CERULEAN]
         )
 
@@ -97,8 +102,8 @@ def register_dashapp(app, title, base_pathname, serve_layout, register_callbacks
             __name__,
             server=app,
             url_base_pathname=f'/{base_pathname}/',
-            assets_folder=f'{get_root_path(__name__)}/assets/',
-            assets_external_path='https://cu-dash-static.s3.us-east-2.amazonaws.com/assets/',
+            assets_folder=f'{get_root_path(__name__)}/dash_assets/',
+            assets_external_path='https://cu-dash-static.s3.us-east-2.amazonaws.com/dash_assets/',
             external_stylesheets=[dbc.themes.CERULEAN]
         )
 
@@ -107,13 +112,11 @@ def register_dashapp(app, title, base_pathname, serve_layout, register_callbacks
         <!DOCTYPE html>
         <html>
             <head>
-                <!-- Global site tag (gtag.js) - Google Analytics -->
                 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145333546-1"></script>
                 <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-
                 gtag('config', 'UA-145333546-1');
                 </script>
                 {%metas%}
@@ -171,11 +174,9 @@ def register_extensions(server):
     """
     from app.extensions import cas
     from app.extensions import dynamo
-    # from app.extensions import mail
 
     cas.init_app(server)
     dynamo.init_app(server)
-    # mail.init_app(server)
 
 
 def register_blueprints(server):
@@ -192,8 +193,14 @@ def register_blueprints(server):
     from app.views import fif_archive
     from app.views import fif_changelog
     from app.views import lab_occupancy
+    from app.views import repository
 
     server.register_blueprint(home.bp)
-    server.register_blueprint(lab_occupancy.bp)
     server.register_blueprint(fif_archive.bp)
     server.register_blueprint(fif_changelog.bp)
+    server.register_blueprint(lab_occupancy.bp)
+    server.register_blueprint(repository.bp)
+
+    # Register errors
+    from app.errors import handlers
+    server.register_blueprint(handlers.bp)
