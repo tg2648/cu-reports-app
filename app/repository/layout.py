@@ -32,7 +32,7 @@ logger = DynamoAccessLogger('facgov')  # Initialize logger with appropriate reso
 
 def serve_repository_layout():
 
-    current_user = User('tg2648')
+    current_user = User()
 
     # Check access, no access if an empty list is returned from a User class
     if current_user.has_facgov_access():

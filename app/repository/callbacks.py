@@ -5,10 +5,8 @@ Dash callbacks
 # Third party imports
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-import dash_html_components as html
 from flask import current_app
 from flask import url_for
-from boto3.dynamodb.conditions import Attr
 
 # Local application imports
 from app.extensions import dynamo

@@ -100,10 +100,6 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   padding: 0.5rem;
 }
 
-.list-group-item:first-child {
-  padding-top: 0px;
-}
-
 .list-group a {
   color: #1B1B1B;
   text-decoration: none;

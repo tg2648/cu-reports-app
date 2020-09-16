@@ -11,49 +11,7 @@ import dash_html_components as html
 # Local application imports
 from app.extensions import dynamo
 from app.utils.func import multisort
-from app.repository.conversions import convert_for_checkbox
-
-
-def build_unit_options():
-    """
-    Build checkbox options from unique units across all DB items.
-    """
-    table = dynamo.tables[current_app.config['DB_REPOSITORY']]
-    resp = table.scan(
-        ProjectionExpression='#attr',
-        ExpressionAttributeNames={'#attr': 'unit'}
-    )
-
-    items = resp['Items']
-    units = sorted({item['unit'] for item in items})
-
-    options = []
-
-    for unit in units:
-        options.append({'label': convert_for_checkbox(unit), 'value': unit})
-
-    return options
-
-
-# def build_year_options():
-#     """
-#     Build checkbox options from unique years across all DB items. Display in reverse order.
-#     """
-#     table = dynamo.tables[current_app.config['DB_REPOSITORY']]
-#     resp = table.scan(
-#         ProjectionExpression='#attr',
-#         ExpressionAttributeNames={'#attr': 'year'}
-#     )
-
-#     items = resp['Items']
-#     units = sorted({item['year'] for item in items})
-
-#     options = [{'label': 'All', 'value': ''}]
-
-#     for unit in reversed(units):
-#         options.append({'label': unit, 'value': unit})
-
-#     return options
+from app.repository.conversions import convert_for_checkbox, fiscal_to_academic
 
 
 def build_search_dropdown():
@@ -69,25 +27,25 @@ def build_search_dropdown():
     options = []
 
     for item in items:
-        options.append({'label': f"{convert_for_checkbox(item['unit'])} - {item['year']} - {item['file_name']}", 'value': item['key']})
+        options.append({'label': f"{convert_for_checkbox(item['unit'])} - {fiscal_to_academic(item['year'])} - {item['file_name']}",
+                        'value': item['key']})
 
     return options
 
 
 def serve_file_list():
 
-    # unit_options = build_unit_options()
     checklist_unit = dbc.FormGroup(
         [
             dbc.Label('Filter', className='h6 text-info'),
             dbc.RadioItems(
                 options=[
+                    {'label': 'Faculty Meetings', 'value': 'faculty_meeting'},
                     {'label': 'PPC', 'value': 'PPC'},
                     {'label': 'EPPC', 'value': 'EPPC'},
                     {'label': 'CED', 'value': 'CED'},
-                    {'label': 'Faculty Meetings', 'value': 'faculty_meeting_minutes'},
                 ],
-                value='PPC',
+                value='faculty_meeting',
                 id='unit-input',
             ),
         ]

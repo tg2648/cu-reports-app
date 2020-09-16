@@ -28,7 +28,7 @@ class CommitteeFiles(object):
     def __init__(self, items):
         """
         Args:
-            items items (list[dict]): List of Dynamo items.
+            items (list[dict]): List of Dynamo items.
         """
 
         self.by_committee = self.group(items)
@@ -103,26 +103,11 @@ class CommitteeFiles(object):
                     ]
             ])
 
-        Args:
-            groupby (str): Which grouping to use
-
         Returns:
             dash_html_components.html.Div
         """
 
         list_div = html.Div([])
-
-        # for cat_name, cat in self.by_committee.items():
-        #     list_div.children.append(html.P(cat_name, className='text-info font-weight-bold'))
-        #     ul = html.Ul([], className='pl-0')
-
-        #     for subcat_name, subcat in cat.items():
-        #         ul.children.append(html.Span(html.U(subcat_name)))
-
-        #         for item in subcat:
-        #             ul.children.append(item)
-
-        #     list_div.children.append(ul)
 
         for cat_name, cat in self.by_committee.items():
             list_div.children.append(html.P(cat_name, className='text-info font-weight-bold'))

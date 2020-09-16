@@ -4,14 +4,14 @@
 """
 
 checkbox_conversion = {
-    'faculty_meeting_minutes': 'Faculty Meetings',
+    'faculty_meeting': 'Faculty Meetings',
 }
 
 heading_conversion = {
     'EPPC': 'Educational Policy and Planning Committee',
     'PPC': 'Policy and Planning Committee',
     'CED': 'Committee on Equity and Diversity',
-    'faculty_meeting_minutes': 'Faculty Meetings',
+    'faculty_meeting': 'Faculty Meetings',
 }
 
 
@@ -19,21 +19,14 @@ def convert_for_checkbox(old):
     """
     If present in the dictionary, return converted value. Otherwise return unchanged.
     """
-    if old in checkbox_conversion:
-        return checkbox_conversion[old]
-    else:
-        return old
+    return checkbox_conversion.get(old, old)
 
 
 def convert_for_heading(old):
     """
     If present in the dictionary, return converted value. Otherwise return unchanged.
     """
-    pass
-    if old in heading_conversion:
-        return heading_conversion[old]
-    else:
-        return old
+    return heading_conversion.get(old, old)
 
 
 def fiscal_to_academic(fiscal):
