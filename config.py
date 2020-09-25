@@ -31,15 +31,15 @@ class Config(object):
     # Dynamo [required by flask_dynamo]
     DYNAMO_SESSION = boto3.Session(
         region_name='us-east-2',
-        aws_access_key_id=os.getenv('DB_ACCESS_KEY'),
-        aws_secret_access_key=os.getenv('DB_SECRET')
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY'),
+        aws_secret_access_key=os.getenv('AWS_SECRET')
     )
 
     # S3
     S3_RESOURCE = boto3.resource(
         's3',
-        aws_access_key_id=os.getenv('S3_ACCESS_KEY'),
-        aws_secret_access_key=os.getenv('S3_SECRET')
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY'),
+        aws_secret_access_key=os.getenv('AWS_SECRET')
     )
     FIF_FILES_BUCKET = os.getenv('FIF_BUCKET_NAME')
     TEMPLATES_BUCKET = os.getenv('TEMPLATES_BUCKET_NAME')
