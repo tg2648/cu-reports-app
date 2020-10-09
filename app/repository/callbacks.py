@@ -10,7 +10,7 @@ from flask import url_for
 
 # Local application imports
 from app.extensions import dynamo
-from app.repository.models import CommitteeFiles
+from app.repository.models import FacgovGeneral, FacgovFacultyMeeting
 from app.repository.conversions import fiscal_to_academic
 
 
@@ -65,7 +65,11 @@ def register_repository_callbacks(dashapp):
         )
 
         items = resp['Items']
-        files = CommitteeFiles(items=items)
+
+        if unit == 'faculty_meeting':
+            files = FacgovFacultyMeeting(items=items)
+        else:
+            files = FacgovGeneral(items=items)
 
         return files.file_list()
 
