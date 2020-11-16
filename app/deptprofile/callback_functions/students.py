@@ -22,6 +22,23 @@ from app.deptprofile.utils.charts import make_text_labels
 from app.deptprofile.layouts.faculty import faculty_fte_chart, faculty_demo_chart
 
 
+def is_blank_grad(data):
+    """
+    Returns True if all year records are zero.
+    {
+        'year': '2005',
+        'existing': '0',
+        'cohort': '0'
+    }
+    """
+    
+    for year in data:
+        if (year['existing'] != '0' or year['cohort'] != '0'):
+            return False
+    
+    return True
+
+
 def register_students_callbacks(dashapp):
 
     table = dynamo.tables[current_app.config['DB_DEPTPROFILE']]
@@ -87,12 +104,13 @@ def register_students_callbacks(dashapp):
                 title='Number of Students',
             ),
             legend={'traceorder': 'normal'},
-            margin=margin(),
+            margin=margin(l=55),
         )
 
         return {'data': chart_data, 'layout': chart_layout}
 
-    @dashapp.callback(Output('students-masters-chart', 'figure'),
+    @dashapp.callback([Output('students-masters-chart', 'figure'),
+                       Output('students-masters-container', 'style')],
                       [Input('dept-dropdown', 'value')])
     def update_student_masters_chart(dept):
 
@@ -108,6 +126,9 @@ def register_students_callbacks(dashapp):
 
         data = resp['Items']
 
+        if is_blank_grad(data):
+            return [], {'display': 'none'}
+
         chart_data = []
         x_axis = make_academic_year_range(0, MAX_YEAR_ID)
 
@@ -140,54 +161,70 @@ def register_students_callbacks(dashapp):
                 )
             )
 
-        for cat in ('selectivity', 'yield'):
+        if dept not in ['AS', 'HUM', 'NS', 'SS']:
+            # Do not add selectivity/yield for aggregates
+            for cat in ('selectivity', 'yield'):
 
-            y_axis_selectivity = [round(float(item.get(cat)) * 100) if item.get(cat) is not None
-                                  else None for item in data]
-            hover_labels = [f'{i}%' if i is not None else None for i in y_axis_selectivity]
-            text_labels = make_text_labels(hover_labels)
+                y_axis_selectivity = [round(float(item.get(cat)) * 100) if item.get(cat) is not None
+                                      else None for item in data]
+                hover_labels = [f'{i}%' if i is not None else None for i in y_axis_selectivity]
+                text_labels = make_text_labels(hover_labels)
 
-            chart_data.append(
-                go.Scatter(
-                    name=f'{cat.title()}',
-                    x=x_axis,
-                    y=y_axis_selectivity,
-                    mode='lines+markers+text',
-                    text=text_labels,
-                    textposition='top center',
-                    textfont=dict(
-                        color=students_grad_colors.get(cat),
-                    ),
-                    hovertext=hover_labels,
-                    hoverinfo='text',
-                    marker=dict(
-                        color=students_grad_colors.get(cat),
-                    ),
-                    yaxis='y2'
+                chart_data.append(
+                    go.Scatter(
+                        name=f'{cat.title()}',
+                        x=x_axis,
+                        y=y_axis_selectivity,
+                        mode='lines+markers+text',
+                        text=text_labels,
+                        textposition='top center',
+                        textfont=dict(
+                            color=students_grad_colors.get(cat),
+                        ),
+                        hovertext=hover_labels,
+                        hoverinfo='text',
+                        marker=dict(
+                            color=students_grad_colors.get(cat),
+                        ),
+                        yaxis='y2'
+                    )
                 )
+
+            chart_layout = go.Layout(
+                barmode='stack',
+                xaxis=axes(),
+                yaxis=axes(
+                    title='Number of Students',
+                ),
+                yaxis2=axes(
+                    title='% Selectivity or Yield',
+                    overlaying='y',
+                    side='right',
+                    rangemode='tozero',
+                    showgrid=False,
+                ),
+                legend={'traceorder': 'normal',
+                        'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
+                margin=margin(l=55),
+            )
+  
+        else:
+
+            chart_layout = go.Layout(
+                barmode='stack',
+                xaxis=axes(),
+                yaxis=axes(
+                    title='Number of Students',
+                ),
+                legend={'traceorder': 'normal',
+                        'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
+                margin=margin(l=55),
             )
 
-        chart_layout = go.Layout(
-            barmode='stack',
-            xaxis=axes(),
-            yaxis=axes(
-                title='Number of Students',
-            ),
-            yaxis2=axes(
-                title='% Selectivity or Yield',
-                overlaying='y',
-                side='right',
-                rangemode='tozero',
-                showgrid=False,
-            ),
-            legend={'traceorder': 'normal',
-                    'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
-            margin=margin(),
-        )
+        return {'data': chart_data, 'layout': chart_layout}, {'display': 'inline'}
 
-        return {'data': chart_data, 'layout': chart_layout}
-
-    @dashapp.callback(Output('students-interdept-chart', 'figure'),
+    @dashapp.callback([Output('students-interdept-chart', 'figure'),
+                       Output('students-interdept-container', 'style')],
                       [Input('dept-dropdown', 'value')])
     def update_student_interdept_chart(dept):
 
@@ -203,6 +240,9 @@ def register_students_callbacks(dashapp):
 
         data = resp['Items']
 
+        if is_blank_grad(data):
+            return [], {'display': 'none'}
+
         chart_data = []
         x_axis = make_academic_year_range(0, MAX_YEAR_ID)
 
@@ -235,54 +275,70 @@ def register_students_callbacks(dashapp):
                 )
             )
 
-        for cat in ('selectivity', 'yield'):
+        if dept not in ['AS', 'HUM', 'NS', 'SS']:
+            # Do not add selectivity/yield for aggregates
+            for cat in ('selectivity', 'yield'):
 
-            y_axis_selectivity = [round(float(item.get(cat)) * 100) if item.get(cat) is not None
-                                  else None for item in data]
-            hover_labels = [f'{i}%' if i is not None else None for i in y_axis_selectivity]
-            text_labels = make_text_labels(hover_labels)
+                y_axis_selectivity = [round(float(item.get(cat)) * 100) if item.get(cat) is not None
+                                    else None for item in data]
+                hover_labels = [f'{i}%' if i is not None else None for i in y_axis_selectivity]
+                text_labels = make_text_labels(hover_labels)
 
-            chart_data.append(
-                go.Scatter(
-                    name=f'{cat.title()}',
-                    x=x_axis,
-                    y=y_axis_selectivity,
-                    mode='lines+markers+text',
-                    text=text_labels,
-                    textposition='top center',
-                    textfont=dict(
-                        color=students_grad_colors.get(cat),
-                    ),
-                    hovertext=hover_labels,
-                    hoverinfo='text',
-                    marker=dict(
-                        color=students_grad_colors.get(cat),
-                    ),
-                    yaxis='y2'
+                chart_data.append(
+                    go.Scatter(
+                        name=f'{cat.title()}',
+                        x=x_axis,
+                        y=y_axis_selectivity,
+                        mode='lines+markers+text',
+                        text=text_labels,
+                        textposition='top center',
+                        textfont=dict(
+                            color=students_grad_colors.get(cat),
+                        ),
+                        hovertext=hover_labels,
+                        hoverinfo='text',
+                        marker=dict(
+                            color=students_grad_colors.get(cat),
+                        ),
+                        yaxis='y2'
+                    )
                 )
+
+            chart_layout = go.Layout(
+                barmode='stack',
+                xaxis=axes(),
+                yaxis=axes(
+                    title='Number of Students',
+                ),
+                yaxis2=axes(
+                    title='% Selectivity or Yield',
+                    overlaying='y',
+                    side='right',
+                    rangemode='tozero',
+                    showgrid=False,
+                ),
+                legend={'traceorder': 'normal',
+                        'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
+                margin=margin(l=55),
             )
 
-        chart_layout = go.Layout(
-            barmode='stack',
-            xaxis=axes(),
-            yaxis=axes(
-                title='Number of Students',
-            ),
-            yaxis2=axes(
-                title='% Selectivity or Yield',
-                overlaying='y',
-                side='right',
-                rangemode='tozero',
-                showgrid=False,
-            ),
-            legend={'traceorder': 'normal',
-                    'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
-            margin=margin(),
-        )
+        else:
 
-        return {'data': chart_data, 'layout': chart_layout}
+            chart_layout = go.Layout(
+                barmode='stack',
+                xaxis=axes(),
+                yaxis=axes(
+                    title='Number of Students',
+                ),
+                legend={'traceorder': 'normal',
+                        'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
+                margin=margin(l=55),
+            )
 
-    @dashapp.callback(Output('students-hybrid-chart', 'figure'),
+        return {'data': chart_data, 'layout': chart_layout}, {'display': 'inline'}
+
+    @dashapp.callback([Output('students-hybrid-chart', 'figure'),
+                       Output('students-hybrid-container', 'style')],
                       [Input('dept-dropdown', 'value')])
     def update_student_hybrid_chart(dept):
 
@@ -298,6 +354,9 @@ def register_students_callbacks(dashapp):
 
         data = resp['Items']
 
+        if is_blank_grad(data):
+            return [], {'display': 'none'}
+
         chart_data = []
         x_axis = make_academic_year_range(0, MAX_YEAR_ID)
 
@@ -330,54 +389,70 @@ def register_students_callbacks(dashapp):
                 )
             )
 
-        for cat in ('selectivity', 'yield'):
+        if dept not in ['AS', 'HUM', 'NS', 'SS']:
+            # Do not add selectivity/yield for aggregates
+            for cat in ('selectivity', 'yield'):
 
-            y_axis_selectivity = [round(float(item.get(cat)) * 100) if item.get(cat) is not None
-                                  else None for item in data]
-            hover_labels = [f'{i}%' if i is not None else None for i in y_axis_selectivity]
-            text_labels = make_text_labels(hover_labels)
+                y_axis_selectivity = [round(float(item.get(cat)) * 100) if item.get(cat) is not None
+                                    else None for item in data]
+                hover_labels = [f'{i}%' if i is not None else None for i in y_axis_selectivity]
+                text_labels = make_text_labels(hover_labels)
 
-            chart_data.append(
-                go.Scatter(
-                    name=f'{cat.title()}',
-                    x=x_axis,
-                    y=y_axis_selectivity,
-                    mode='lines+markers+text',
-                    text=text_labels,
-                    textposition='top center',
-                    textfont=dict(
-                        color=students_grad_colors.get(cat),
-                    ),
-                    hovertext=hover_labels,
-                    hoverinfo='text',
-                    marker=dict(
-                        color=students_grad_colors.get(cat),
-                    ),
-                    yaxis='y2'
+                chart_data.append(
+                    go.Scatter(
+                        name=f'{cat.title()}',
+                        x=x_axis,
+                        y=y_axis_selectivity,
+                        mode='lines+markers+text',
+                        text=text_labels,
+                        textposition='top center',
+                        textfont=dict(
+                            color=students_grad_colors.get(cat),
+                        ),
+                        hovertext=hover_labels,
+                        hoverinfo='text',
+                        marker=dict(
+                            color=students_grad_colors.get(cat),
+                        ),
+                        yaxis='y2'
+                    )
                 )
+
+            chart_layout = go.Layout(
+                barmode='stack',
+                xaxis=axes(),
+                yaxis=axes(
+                    title='Number of Students',
+                ),
+                yaxis2=axes(
+                    title='% Selectivity or Yield',
+                    overlaying='y',
+                    side='right',
+                    rangemode='tozero',
+                    showgrid=False,
+                ),
+                legend={'traceorder': 'normal',
+                        'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
+                margin=margin(l=55),
+            )
+        
+        else:
+
+            chart_layout = go.Layout(
+                barmode='stack',
+                xaxis=axes(),
+                yaxis=axes(
+                    title='Number of Students',
+                ),
+                legend={'traceorder': 'normal',
+                        'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
+                margin=margin(l=55),
             )
 
-        chart_layout = go.Layout(
-            barmode='stack',
-            xaxis=axes(),
-            yaxis=axes(
-                title='Number of Students',
-            ),
-            yaxis2=axes(
-                title='% Selectivity or Yield',
-                overlaying='y',
-                side='right',
-                rangemode='tozero',
-                showgrid=False,
-            ),
-            legend={'traceorder': 'normal',
-                    'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
-            margin=margin(),
-        )
+        return {'data': chart_data, 'layout': chart_layout}, {'display': 'inline'}
 
-        return {'data': chart_data, 'layout': chart_layout}
-
-    @dashapp.callback(Output('students-sps-chart', 'figure'),
+    @dashapp.callback([Output('students-sps-chart', 'figure'),
+                       Output('students-sps-container', 'style')],
                       [Input('dept-dropdown', 'value')])
     def update_student_sps_chart(dept):
 
@@ -393,6 +468,9 @@ def register_students_callbacks(dashapp):
 
         data = resp['Items']
 
+        if is_blank_grad(data):
+            return [], {'display': 'none'}
+
         chart_data = []
         x_axis = make_academic_year_range(0, MAX_YEAR_ID)
 
@@ -433,12 +511,13 @@ def register_students_callbacks(dashapp):
             ),
             legend={'traceorder': 'normal',
                     'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
-            margin=margin(),
+            margin=margin(l=55),
         )
 
-        return {'data': chart_data, 'layout': chart_layout}
+        return {'data': chart_data, 'layout': chart_layout}, {'display': 'inline'}
 
-    @dashapp.callback(Output('students-phd-chart', 'figure'),
+    @dashapp.callback([Output('students-phd-chart', 'figure'),
+                       Output('students-phd-container', 'style')],
                       [Input('dept-dropdown', 'value')])
     def update_student_phd_chart(dept):
 
@@ -454,6 +533,9 @@ def register_students_callbacks(dashapp):
 
         data = resp['Items']
 
+        if is_blank_grad(data):
+            return [], {'display': 'none'}
+        
         chart_data = []
         x_axis = make_academic_year_range(0, MAX_YEAR_ID)
 
@@ -486,49 +568,64 @@ def register_students_callbacks(dashapp):
                 )
             )
 
-        for cat in ('selectivity', 'yield'):
+        if dept not in ['AS', 'HUM', 'NS', 'SS']:
+            # Do not add selectivity/yield for aggregates
+            for cat in ('selectivity', 'yield'):
 
-            y_axis_selectivity = [round(float(item.get(cat)) * 100) if item.get(cat) is not None
-                                  else None for item in data]
-            hover_labels = [f'{i}%' if i is not None else None for i in y_axis_selectivity]
-            text_labels = make_text_labels(hover_labels)
+                y_axis_selectivity = [round(float(item.get(cat)) * 100) if item.get(cat) is not None
+                                    else None for item in data]
+                hover_labels = [f'{i}%' if i is not None else None for i in y_axis_selectivity]
+                text_labels = make_text_labels(hover_labels)
 
-            chart_data.append(
-                go.Scatter(
-                    name=f'{cat.title()}',
-                    x=x_axis,
-                    y=y_axis_selectivity,
-                    mode='lines+markers+text',
-                    text=text_labels,
-                    textposition='top center',
-                    textfont=dict(
-                        color=students_grad_colors.get(cat),
-                    ),
-                    hovertext=hover_labels,
-                    hoverinfo='text',
-                    marker=dict(
-                        color=students_grad_colors.get(cat),
-                    ),
-                    yaxis='y2'
+                chart_data.append(
+                    go.Scatter(
+                        name=f'{cat.title()}',
+                        x=x_axis,
+                        y=y_axis_selectivity,
+                        mode='lines+markers+text',
+                        text=text_labels,
+                        textposition='top center',
+                        textfont=dict(
+                            color=students_grad_colors.get(cat),
+                        ),
+                        hovertext=hover_labels,
+                        hoverinfo='text',
+                        marker=dict(
+                            color=students_grad_colors.get(cat),
+                        ),
+                        yaxis='y2'
+                    )
                 )
+
+            chart_layout = go.Layout(
+                barmode='stack',
+                xaxis=axes(),
+                yaxis=axes(
+                    title='Number of Students',
+                ),
+                yaxis2=axes(
+                    title='% Selectivity or Yield',
+                    overlaying='y',
+                    side='right',
+                    rangemode='tozero',
+                    showgrid=False,
+                ),
+                legend={'traceorder': 'normal',
+                        'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
+                margin=margin(l=55),
             )
 
-        chart_layout = go.Layout(
-            barmode='stack',
-            xaxis=axes(),
-            yaxis=axes(
-                title='Number of Students',
-            ),
-            yaxis2=axes(
-                title='% Selectivity or Yield',
-                overlaying='y',
-                side='right',
-                rangemode='tozero',
-                showgrid=False,
-            ),
-            legend={'traceorder': 'normal',
-                    'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
-            margin=margin(),
-        )
+        else:
 
-        return {'data': chart_data, 'layout': chart_layout}
+            chart_layout = go.Layout(
+                barmode='stack',
+                xaxis=axes(),
+                yaxis=axes(
+                    title='Number of Students',
+                ),
+                legend={'traceorder': 'normal',
+                        'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
+                margin=margin(l=55),
+            )
+
+        return {'data': chart_data, 'layout': chart_layout}, {'display': 'inline'}
