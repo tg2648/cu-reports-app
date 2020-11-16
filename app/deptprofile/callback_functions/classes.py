@@ -101,7 +101,7 @@ def register_classes_callbacks(dashapp):
                 title='Number of Classes',
             ),
             legend={'traceorder': 'normal'},
-            margin=margin(),
+            margin=margin(l=70),
         )
 
         return {'data': chart_data, 'layout': chart_layout}
@@ -159,7 +159,7 @@ def register_classes_callbacks(dashapp):
                 title='Number of Classes',
             ),
             legend={'traceorder': 'normal'},
-            margin=margin(),
+            margin=margin(l=70),
         )
 
         return {'data': chart_data, 'layout': chart_layout}
@@ -204,7 +204,7 @@ def register_classes_callbacks(dashapp):
         )
 
         chart_layout = go.Layout(
-            margin=margin(),
+            margin=margin(l=70),
         )
 
         return {'data': chart_data, 'layout': chart_layout}
@@ -262,7 +262,7 @@ def register_classes_callbacks(dashapp):
                 title='Number of Enrollments',
             ),
             legend={'traceorder': 'normal'},
-            margin=margin(),
+            margin=margin(l=70),
         )
 
         return {'data': chart_data, 'layout': chart_layout}
@@ -320,7 +320,7 @@ def register_classes_callbacks(dashapp):
                 title='Number of Enrollments',
             ),
             legend={'traceorder': 'normal'},
-            margin=margin(),
+            margin=margin(l=70),
         )
 
         return {'data': chart_data, 'layout': chart_layout}
