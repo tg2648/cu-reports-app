@@ -80,7 +80,7 @@ def register_classes_callbacks(dashapp):
                     name=chart_cat,
                     x=x_axis,
                     y=y_axis,
-                    text=[f' {round(float(i))} ' for i in y_axis],  # pad with spaces to prevent labels from rotating
+                    text=[f' {round(float(i)):,} ' for i in y_axis],  # pad with spaces to prevent labels from rotating
                     textposition='inside',
                     hovertext=[f'{chart_cat}: {i}' for i in y_axis],
                     hoverinfo='text',
@@ -138,7 +138,7 @@ def register_classes_callbacks(dashapp):
                     name=chart_cat,
                     x=x_axis,
                     y=y_axis,
-                    text=[f' {round(float(i))} ' for i in y_axis],  # pad with spaces to prevent labels from rotating
+                    text=[f' {round(float(i)):,} ' for i in y_axis],  # pad with spaces to prevent labels from rotating
                     textposition='inside',
                     hovertext=[f'{chart_cat}: {i}' for i in y_axis],
                     hoverinfo='text',
@@ -241,7 +241,7 @@ def register_classes_callbacks(dashapp):
                     name=chart_cat,
                     x=x_axis,
                     y=y_axis,
-                    text=[f' {round(float(i))} ' for i in y_axis],  # pad with spaces to prevent labels from rotating
+                    text=[f' {round(float(i)):,} ' for i in y_axis],  # pad with spaces to prevent labels from rotating
                     textposition='inside',
                     hovertext=[f'{chart_cat}: {i}' for i in y_axis],
                     hoverinfo='text',
@@ -299,7 +299,7 @@ def register_classes_callbacks(dashapp):
                     name=chart_cat,
                     x=x_axis,
                     y=y_axis,
-                    text=[f' {round(float(i))} ' for i in y_axis],  # pad with spaces to prevent labels from rotating
+                    text=[f' {round(float(i)):,} ' for i in y_axis],  # pad with spaces to prevent labels from rotating
                     textposition='inside',
                     hovertext=[f'{chart_cat}: {i}' for i in y_axis],
                     hoverinfo='text',

@@ -105,6 +105,28 @@ class User(object):
         else:
             return []
 
+    def deptprofile_access(self, arg):
+        """
+        Get details about user's access to the dept profiles for a given argument.
+        Argument options:
+            - 'dept' returns a list of departments to which user has faculty-level access
+            - 'chair_dept' returns a list of department codes for which user has chair-level access
+
+        Returns:
+            - If user has access: a list of department codes
+            - If user does not have access (either not in DB or no access to dashboard): empty list
+        """
+        if (has_request_context() and 'CAS_USERNAME' in session) or (self._uni is not None):
+
+            try:
+                response = dynamo.tables[self.user_table_name].get_item(Key={'UNI': self.uni})
+                return list(response['Item']['deptprofile'][arg])
+            except KeyError:
+                return []
+
+        else:
+            return []
+
     def searchcom_access(self):
         """
         Get details about user's access to the search dashboard
@@ -124,7 +146,7 @@ class User(object):
         else:
             return []
 
-    def admin_access(self):
+    def has_admin_access(self):
         """
         Get details about user's access to the Admin dashboard
         Returns:

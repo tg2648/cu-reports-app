@@ -11,7 +11,7 @@ def make_text_labels(hover_labels):
     text_labels = [None] * len(hover_labels)
 
     i = 0
-    while hover_labels[i] is None:
+    while (hover_labels[i] is None):
         i += 1
 
     text_labels[i] = hover_labels[i]

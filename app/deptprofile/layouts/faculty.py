@@ -11,12 +11,14 @@ import plotly.graph_objs as go
 
 # Local application imports
 from app.deptprofile.utils.modebar import modebar_config
-
+from app.deptprofile.utils.years import MAX_ACADEMIC_YEAR
 
 """
 Components of the tab (charts/tables)
 """
-faculty_table = dash_table.DataTable(
+
+# Not wrapping in Col would make the table go outside the container width for some reason
+faculty_table = dbc.Col(dash_table.DataTable(
     id='faculty-table',
     columns=[
         {'name': 'Tenure Status', 'id': 'ten_stat'},
@@ -50,7 +52,7 @@ faculty_table = dash_table.DataTable(
         'fontWeight': 'bold',
         'border-top': '0px'
     },
-)
+))
 
 faculty_fte_chart = dcc.Graph(
     id='faculty-fte-chart',
@@ -69,28 +71,32 @@ Main faculty tab skeleton
 """
 faculty_tab = html.Div(
     [
-        html.H5('Department Faculty', className='text-info'),
-        dbc.Col(
+        dbc.FormGroup(
             [
-                dbc.FormGroup(
-                    [
-                        dbc.Label('Show by:', html_for='fte-with-demo', className='pr-3'),
-                        dbc.RadioItems(
-                            options=[
-                                {'label': 'Ladder-rank: FTE and Demographics', 'value': 'fte-with-demo'},
-                                {'label': 'Faculty and Instructors', 'value': 'fte'}
-                            ],
-                            value='fte-with-demo',
-                            inline=True,
-                            id='faculty-chart-choices',
-                        ),
-                    ],
-                    row=True
-                )
-            ]
+                dbc.Label('Show by:', html_for='faculty-chart-choices', className='pr-3', width=1),
+                dbc.Col(
+                    dbc.RadioItems(
+                        options=[
+                            {'label': 'Ladder-rank: FTE and Demographics', 'value': 'fte-with-demo'},
+                            {'label': 'Faculty and Instructors', 'value': 'fte'}
+                        ],
+                        value='fte-with-demo',
+                        inline=True,
+                        id='faculty-chart-choices',
+                    ),
+                    className='align-self-center',
+                    width=11,
+                ),
+            ],
+            row=True
         ),
         html.Div(id='faculty-chart-container'),
-        html.H5('2019/20', className='text-info'),
-        dbc.Col(faculty_table)
+        html.Div(
+            [
+                html.H5(MAX_ACADEMIC_YEAR, className='text-info'),
+                faculty_table,
+            ],
+            id='faculty-table-container'
+        )
     ]
 )
