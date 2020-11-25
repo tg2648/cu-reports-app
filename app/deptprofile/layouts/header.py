@@ -28,16 +28,16 @@ notes_text = dcc.Markdown(
 
     **Students**
 
-    - Program enrollments are for the fall term of each year. 
-    - Each undergraduate program declaration including majors, concentrations, and minors, are counted as 1 student.  
-    - Inter-departmental program declarations are counted as 1 student in each department.  In the divisional profiles, inter-departmental programs are counted as 0.5 in each department. 
-    - Graduate PhD program are counted as 1 student regardless of what level of the degree they are currently working towards (MA, MPhil, or PhD). 
+    - Program enrollments are for the fall term of each year.
+    - Each undergraduate program declaration including majors, concentrations, and minors, are counted as 1 student.
+    - Inter-departmental program declarations are counted as 1 student in each department.  In the divisional profiles, inter-departmental programs are counted as 0.5 in each department.
+    - Graduate PhD program are counted as 1 student regardless of what level of the degree they are currently working towards (MA, MPhil, or PhD).
 
     **Classes  **
 
-    - Total enrollments for department offered classes include all classes offered by the department, excluding core and laboratory classes.  
+    - Total enrollments for department offered classes include all classes offered by the department, excluding core and laboratory classes.
     - Class enrollments are included once if co-taught.
-    - Graduate Student Appointment: Instructors with graduate student appointments such as Graduate Research Assistant, Preceptor, Teaching Assistant/Fellow, etc. 
+    - Graduate Student Appointment: Instructors with graduate student appointments such as Graduate Research Assistant, Preceptor, Teaching Assistant/Fellow, etc.
 
     For questions, please contact Timur Gulyamov (<tg2648@columbia.edu>).
     '''

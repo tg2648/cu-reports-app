@@ -4,22 +4,17 @@ Students tab callacks
 
 # Third party imports
 from dash.dependencies import Input, Output
-from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
 
 from flask import current_app
-
-from boto3.dynamodb.conditions import Attr
 
 # Local application imports
 from app.extensions import dynamo
 
 from app.deptprofile.utils.styling import axes, margin
-from app.deptprofile.utils.colors import colors, students_ug_colors, students_grad_colors
+from app.deptprofile.utils.colors import students_ug_colors, students_grad_colors
 from app.deptprofile.utils.years import MAX_YEAR_ID, MAX_FISCAL_YEAR, make_academic_year_range
 from app.deptprofile.utils.charts import make_text_labels
-
-from app.deptprofile.layouts.faculty import faculty_fte_chart, faculty_demo_chart
 
 
 def is_blank_grad(data):
@@ -31,11 +26,11 @@ def is_blank_grad(data):
         'cohort': '0'
     }
     """
-    
+
     for year in data:
         if (year['existing'] != '0' or year['cohort'] != '0'):
             return False
-    
+
     return True
 
 
@@ -43,9 +38,9 @@ def register_students_callbacks(dashapp):
 
     table = dynamo.tables[current_app.config['DB_DEPTPROFILE']]
 
-    #####################
-    ### UNDERGRADUATE ###
-    #####################
+    #################
+    # UNDERGRADUATE #
+    #################
 
     @dashapp.callback(Output('students-ug-chart', 'figure'),
                       [Input('dept-dropdown', 'value')])
@@ -55,7 +50,7 @@ def register_students_callbacks(dashapp):
             KeyConditionExpression='PK = :pk AND SK BETWEEN :lower AND :upper',
             ExpressionAttributeValues={
                 ':pk': f'DEPT#{dept}',
-                ':lower': f'DATA#STUDENTS#UG#2005',
+                ':lower': 'DATA#STUDENTS#UG#2005',
                 ':upper': f'DATA#STUDENTS#UG#{int(MAX_FISCAL_YEAR) + 1}$',
             },
             ScanIndexForward=True,
@@ -83,7 +78,7 @@ def register_students_callbacks(dashapp):
                     name=categories.get(cat),
                     x=x_axis,
                     y=y_axis,
-                    text=[i if len(i) > 1 else f' {i} ' for i in y_axis],  # pad single-digit numbers with spaces to prevent them from rotating
+                    text=[i if len(i) > 1 else f' {i} ' for i in y_axis],  # pad single-digit numbers to prevent rotation
                     textposition='inside',
                     hovertext=[f'{categories.get(cat)}: {i}' for i in y_axis],
                     hoverinfo='text',
@@ -118,7 +113,7 @@ def register_students_callbacks(dashapp):
             KeyConditionExpression='PK = :pk AND SK BETWEEN :lower AND :upper',
             ExpressionAttributeValues={
                 ':pk': f'DEPT#{dept}',
-                ':lower': f'DATA#STUDENTS#MASTERS#2005',
+                ':lower': 'DATA#STUDENTS#MASTERS#2005',
                 ':upper': f'DATA#STUDENTS#MASTERS#{int(MAX_FISCAL_YEAR) + 1}$',
             },
             ScanIndexForward=True,
@@ -147,7 +142,7 @@ def register_students_callbacks(dashapp):
                     name=categories.get(cat),
                     x=x_axis,
                     y=y_axis,
-                    text=[i if len(i) > 1 else f' {i} ' for i in y_axis],  # pad single-digit numbers with spaces to prevent them from rotating
+                    text=[i if len(i) > 1 else f' {i} ' for i in y_axis],  # pad single-digit numbers to prevent rotation
                     textposition='inside',
                     hovertext=[f'{categories.get(cat)}: {i}' for i in y_axis],
                     hoverinfo='text',
@@ -207,7 +202,7 @@ def register_students_callbacks(dashapp):
                         'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
                 margin=margin(l=55),
             )
-  
+
         else:
 
             chart_layout = go.Layout(
@@ -232,7 +227,7 @@ def register_students_callbacks(dashapp):
             KeyConditionExpression='PK = :pk AND SK BETWEEN :lower AND :upper',
             ExpressionAttributeValues={
                 ':pk': f'DEPT#{dept}',
-                ':lower': f'DATA#STUDENTS#INTDMASTERS#2005',
+                ':lower': 'DATA#STUDENTS#INTDMASTERS#2005',
                 ':upper': f'DATA#STUDENTS#INTDMASTERS#{int(MAX_FISCAL_YEAR) + 1}$',
             },
             ScanIndexForward=True,
@@ -261,7 +256,7 @@ def register_students_callbacks(dashapp):
                     name=categories.get(cat),
                     x=x_axis,
                     y=y_axis,
-                    text=[i if len(i) > 1 else f' {i} ' for i in y_axis],  # pad single-digit numbers with spaces to prevent them from rotating
+                    text=[i if len(i) > 1 else f' {i} ' for i in y_axis],  # pad single-digit numbers to prevent rotation
                     textposition='inside',
                     hovertext=[f'{categories.get(cat)}: {i}' for i in y_axis],
                     hoverinfo='text',
@@ -280,7 +275,7 @@ def register_students_callbacks(dashapp):
             for cat in ('selectivity', 'yield'):
 
                 y_axis_selectivity = [round(float(item.get(cat)) * 100) if item.get(cat) is not None
-                                    else None for item in data]
+                                      else None for item in data]
                 hover_labels = [f'{i}%' if i is not None else None for i in y_axis_selectivity]
                 text_labels = make_text_labels(hover_labels)
 
@@ -346,7 +341,7 @@ def register_students_callbacks(dashapp):
             KeyConditionExpression='PK = :pk AND SK BETWEEN :lower AND :upper',
             ExpressionAttributeValues={
                 ':pk': f'DEPT#{dept}',
-                ':lower': f'DATA#STUDENTS#HYBRIDMASTERS#2005',
+                ':lower': 'DATA#STUDENTS#HYBRIDMASTERS#2005',
                 ':upper': f'DATA#STUDENTS#HYBRIDMASTERS#{int(MAX_FISCAL_YEAR) + 1}$',
             },
             ScanIndexForward=True,
@@ -375,7 +370,7 @@ def register_students_callbacks(dashapp):
                     name=categories.get(cat),
                     x=x_axis,
                     y=y_axis,
-                    text=[i if len(i) > 1 else f' {i} ' for i in y_axis],  # pad single-digit numbers with spaces to prevent them from rotating
+                    text=[i if len(i) > 1 else f' {i} ' for i in y_axis],  # pad single-digit numbers to prevent rotation
                     textposition='inside',
                     hovertext=[f'{categories.get(cat)}: {i}' for i in y_axis],
                     hoverinfo='text',
@@ -394,7 +389,7 @@ def register_students_callbacks(dashapp):
             for cat in ('selectivity', 'yield'):
 
                 y_axis_selectivity = [round(float(item.get(cat)) * 100) if item.get(cat) is not None
-                                    else None for item in data]
+                                      else None for item in data]
                 hover_labels = [f'{i}%' if i is not None else None for i in y_axis_selectivity]
                 text_labels = make_text_labels(hover_labels)
 
@@ -435,7 +430,7 @@ def register_students_callbacks(dashapp):
                         'x': 1.05},  # By default x is 1.02 which will make it overlap with the 2nd y-axis
                 margin=margin(l=55),
             )
-        
+
         else:
 
             chart_layout = go.Layout(
@@ -460,7 +455,7 @@ def register_students_callbacks(dashapp):
             KeyConditionExpression='PK = :pk AND SK BETWEEN :lower AND :upper',
             ExpressionAttributeValues={
                 ':pk': f'DEPT#{dept}',
-                ':lower': f'DATA#STUDENTS#SPS#2005',
+                ':lower': 'DATA#STUDENTS#SPS#2005',
                 ':upper': f'DATA#STUDENTS#SPS#{int(MAX_FISCAL_YEAR) + 1}$',
             },
             ScanIndexForward=True,
@@ -489,7 +484,7 @@ def register_students_callbacks(dashapp):
                     name=categories.get(cat),
                     x=x_axis,
                     y=y_axis,
-                    text=[i if len(i) > 1 else f' {i} ' for i in y_axis],  # pad single-digit numbers with spaces to prevent them from rotating
+                    text=[i if len(i) > 1 else f' {i} ' for i in y_axis],  # pad single-digit numbers to prevent rotation
                     textposition='inside',
                     hovertext=[f'{categories.get(cat)}: {i}' for i in y_axis],
                     hoverinfo='text',
@@ -525,7 +520,7 @@ def register_students_callbacks(dashapp):
             KeyConditionExpression='PK = :pk AND SK BETWEEN :lower AND :upper',
             ExpressionAttributeValues={
                 ':pk': f'DEPT#{dept}',
-                ':lower': f'DATA#STUDENTS#PHD#2005',
+                ':lower': 'DATA#STUDENTS#PHD#2005',
                 ':upper': f'DATA#STUDENTS#PHD#{int(MAX_FISCAL_YEAR) + 1}$',
             },
             ScanIndexForward=True,
@@ -535,7 +530,7 @@ def register_students_callbacks(dashapp):
 
         if is_blank_grad(data):
             return [], {'display': 'none'}
-        
+
         chart_data = []
         x_axis = make_academic_year_range(0, MAX_YEAR_ID)
 
@@ -554,7 +549,7 @@ def register_students_callbacks(dashapp):
                     name=categories.get(cat),
                     x=x_axis,
                     y=y_axis,
-                    text=[i if len(i) > 1 else f' {i} ' for i in y_axis],  # pad single-digit numbers with spaces to prevent them from rotating
+                    text=[i if len(i) > 1 else f' {i} ' for i in y_axis],  # pad single-digit numbers to prevent rotation
                     textposition='inside',
                     hovertext=[f'{categories.get(cat)}: {i}' for i in y_axis],
                     hoverinfo='text',
@@ -573,7 +568,7 @@ def register_students_callbacks(dashapp):
             for cat in ('selectivity', 'yield'):
 
                 y_axis_selectivity = [round(float(item.get(cat)) * 100) if item.get(cat) is not None
-                                    else None for item in data]
+                                      else None for item in data]
                 hover_labels = [f'{i}%' if i is not None else None for i in y_axis_selectivity]
                 text_labels = make_text_labels(hover_labels)
 

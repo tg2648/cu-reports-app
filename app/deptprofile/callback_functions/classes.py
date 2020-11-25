@@ -3,8 +3,7 @@ Faculty tab callacks
 """
 
 # Third party imports
-from dash.dependencies import Input, Output, State
-from dash.exceptions import PreventUpdate
+from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 
 from flask import current_app

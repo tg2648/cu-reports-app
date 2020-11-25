@@ -2,3 +2,5 @@
 ignore=E402
 max-line-length=125
 exclude=.git,__pycache__
+per-file-ignores=
+    app\deptprofile\layouts\header.py: E501
