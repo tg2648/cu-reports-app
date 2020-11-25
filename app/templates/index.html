@@ -3,6 +3,12 @@
 {%- block content %}
 <div class="page-header">
 
+  {%- if config['ENV'] == 'dev' %}
+  <div class="alert alert-info my-3">
+    <strong>Heads up!</strong> You are on the test version of the A&S reporting website.
+  </div>
+  {%- endif %}
+
   <div class="row mt-3">
     <div class="col-md">
       <h3 class="text-info mb-3">Welcome</h3>
@@ -26,11 +32,11 @@
       </small>
     </div>
     
-    <div class="col-md-4">
+    <div class="col-md-3">
       <h3 class="text-info mb-3" style="padding-left: 0.4rem;">Navigation</h3>
       <div class="list-group">
-          <a href="/faculty_governance/" class="disabled text-muted list-group-item list-group-item-action flex-column align-items-start">
-            Faculty Governance<br>(coming soon)
+          <a href="/faculty_governance/" class="list-group-item list-group-item-action flex-column align-items-start">
+            Faculty Governance
           </a>
           <a href="/deptprofile/" class="list-group-item list-group-item-action flex-column align-items-start">
             Department Profiles
