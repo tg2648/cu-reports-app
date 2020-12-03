@@ -58,9 +58,6 @@ ALL_DROPDOWN_OPTIONS = [
 
 def serve_dept_dropdown(dropdown_options):
 
-    print(dropdown_options)
-    print(dropdown_options[0]['value'])
-
     dept_dropdown = dbc.Row(
         dbc.Col(
             dbc.FormGroup(
