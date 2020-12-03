@@ -1,11 +1,11 @@
-"""Repository of various documents
+"""
+Repository of various documents
 """
 
 # Third party imports
 from flask import Blueprint
 from flask import Response
 from flask import redirect
-from flask import url_for
 from flask import current_app
 from flask_cas import login_required
 
@@ -16,7 +16,7 @@ from app.logger import DynamoAccessLogger
 from app.errors.handlers import NotFoundError, ForbiddenError
 
 
-bp = Blueprint('repository', __name__, url_prefix='/faculty_governance')
+bp = Blueprint('facgov', __name__, url_prefix='/faculty_governance')
 
 
 @bp.route('/<path:key>')
@@ -32,7 +32,7 @@ def download(key):
     if current_user.has_facgov_access():
 
         client = current_app.config['S3_RESOURCE']
-        bucket = client.Bucket(current_app.config['REPOSITORY_BUCKET'])
+        bucket = client.Bucket(current_app.config['FACGOV_BUCKET'])
 
         # Redirect to base url for keys that end with '/' which are valid S3 keys but are not files
         if key.endswith('/'):
@@ -54,4 +54,5 @@ def download(key):
     else:
 
         logger.log_access(has_access=False, downloaded_object=key)
-        raise ForbiddenError('You do not have access to this page. Please reach out to Timur Gulyamov (tg2648) to get access.')
+        raise ForbiddenError('You do not have access to this page. \
+                              Please reach out to Timur Gulyamov (tg2648) to get access.')

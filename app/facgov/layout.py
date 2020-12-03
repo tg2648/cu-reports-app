@@ -23,14 +23,14 @@ from app.users import User
 from app.logger import DynamoAccessLogger
 
 from app.navbar import serve_navbar
-from app.repository.layouts.header import header
-from app.repository.layouts.file_list import serve_file_list
+from app.facgov.layouts.header import header
+from app.facgov.layouts.file_list import serve_file_list
 
 
 logger = DynamoAccessLogger('facgov')  # Initialize logger with appropriate resource
 
 
-def serve_repository_layout():
+def serve_facgov_layout():
 
     current_user = User()
 

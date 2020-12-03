@@ -10,13 +10,13 @@ from flask import url_for
 
 # Local application imports
 from app.extensions import dynamo
-from app.repository.models import FacgovGeneral, FacgovFacultyMeeting
-from app.repository.conversions import fiscal_to_academic
+from app.facgov.models import FacgovGeneral, FacgovFacultyMeeting
+from app.facgov.conversions import fiscal_to_academic
 
 
-def register_repository_callbacks(dashapp):
+def register_facgov_callbacks(dashapp):
 
-    table = dynamo.tables[current_app.config['DB_REPOSITORY']]
+    table = dynamo.tables[current_app.config['DB_FACGOV']]
 
     @dashapp.callback(Output('file-list-left', 'children'),
                       [Input('unit-input', 'value'),
@@ -80,7 +80,7 @@ def register_repository_callbacks(dashapp):
         if value == '' or value is None:
             raise PreventUpdate
         else:
-            return url_for('repository.download', key=value)
+            return url_for('facgov.download', key=value)
 
     # YEAR CHECKBOXES #
     @dashapp.callback(Output('year-input', 'options'),
@@ -90,7 +90,7 @@ def register_repository_callbacks(dashapp):
         Populate year checkboxes based on the selected unit.
         Needed to be done in a callback because not all units have files for all years.
         """
-        table = dynamo.tables[current_app.config['DB_REPOSITORY']]
+        table = dynamo.tables[current_app.config['DB_FACGOV']]
         resp = table.query(
             IndexName='unit-year-index',
             KeyConditionExpression='#u = :u',

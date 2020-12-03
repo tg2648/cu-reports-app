@@ -11,7 +11,7 @@ import dash_html_components as html
 # Local application imports
 from app.extensions import dynamo
 from app.utils.func import multisort
-from app.repository.conversions import convert_for_checkbox, fiscal_to_academic
+from app.facgov.conversions import convert_for_checkbox, fiscal_to_academic
 
 
 def build_search_dropdown():
@@ -19,7 +19,7 @@ def build_search_dropdown():
     Build dropdown options from unique years across all DB items
     Display in reverse order
     """
-    table = dynamo.tables[current_app.config['DB_REPOSITORY']]
+    table = dynamo.tables[current_app.config['DB_FACGOV']]
     resp = table.scan()
 
     # First sort by committee, then by year, then by file name
@@ -27,8 +27,10 @@ def build_search_dropdown():
     options = []
 
     for item in items:
-        options.append({'label': f"{convert_for_checkbox(item['unit'])} - {fiscal_to_academic(item['year'])} - {item['file_name']}",
-                        'value': item['key']})
+        options.append(
+            {'label': f"{convert_for_checkbox(item['unit'])} - {fiscal_to_academic(item['year'])} - {item['file_name']}",
+             'value': item['key']}
+        )
 
     return options
 

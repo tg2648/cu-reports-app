@@ -11,8 +11,8 @@ from flask import url_for
 
 # Local application imports
 from app.utils.func import multisort
-from app.repository.conversions import convert_for_heading
-from app.repository.conversions import fiscal_to_academic
+from app.facgov.conversions import convert_for_heading
+from app.facgov.conversions import fiscal_to_academic
 
 
 class Facgov(object):
@@ -25,7 +25,7 @@ class Facgov(object):
     def make_link(self, item):
         return html.A(
             item['file_name'],
-            href=url_for('repository.download', key=item['key']),
+            href=url_for('facgov.download', key=item['key']),
             target='blank',
             className='facgov-link'
         )

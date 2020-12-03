@@ -55,10 +55,10 @@ def create_app():
     from app.deptprofile.callbacks import register_deptprofile_callbacks as deptprofile_callbacks
     register_dashapp(server, 'Dept. Profile', 'deptprofile', deptprofile_layout, deptprofile_callbacks)
 
-    # Register document repository
-    from app.repository.layout import serve_repository_layout as repository_layout
-    from app.repository.callbacks import register_repository_callbacks as repository_callbacks
-    register_dashapp(server, 'Faculty Governance', 'faculty_governance', repository_layout, repository_callbacks)
+    # Register faculty governance
+    from app.facgov.layout import serve_facgov_layout as facgov_layout
+    from app.facgov.callbacks import register_facgov_callbacks as facgov_callbacks
+    register_dashapp(server, 'Faculty Governance', 'faculty_governance', facgov_layout, facgov_callbacks)
 
     return server
 
@@ -193,13 +193,13 @@ def register_blueprints(server):
     from app.views import fif_archive
     from app.views import fif_changelog
     from app.views import lab_occupancy
-    from app.views import repository
+    from app.views import facgov
 
     server.register_blueprint(home.bp)
     server.register_blueprint(fif_archive.bp)
     server.register_blueprint(fif_changelog.bp)
     server.register_blueprint(lab_occupancy.bp)
-    server.register_blueprint(repository.bp)
+    server.register_blueprint(facgov.bp)
 
     # Register errors
     from app.errors import handlers
