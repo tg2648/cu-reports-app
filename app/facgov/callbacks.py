@@ -123,3 +123,14 @@ def register_facgov_callbacks(dashapp):
         if n:
             return not is_open
         return is_open
+
+    # MODALS #
+    @dashapp.callback(
+        Output('contact-popup', 'is_open'),
+        [Input('contact-popup-button', 'n_clicks'), Input('close-contact', 'n_clicks')],
+        [State('contact-popup', 'is_open')],
+    )
+    def toggle_modal(n1, n2, is_open):
+        if n1 or n2:
+            return not is_open
+        return is_open

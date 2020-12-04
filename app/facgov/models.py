@@ -7,6 +7,7 @@ from collections import defaultdict
 
 # Third party imports
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 from flask import url_for
 
 # Local application imports
@@ -212,11 +213,12 @@ class FacgovFacultyMeeting(Facgov):
                         className='ml-4'
                     )
 
-                    ul.children.append(list_item)
+                    ul.children.insert(0, list_item)  # Insert at front to display in descending order
 
                 col = html.Div(ul, className='col')
                 row.children.append(col)
 
                 list_div.children.append(row)
 
-        return list_div
+        disclaimer = dbc.Alert('More minutes will be made available as they are gathered.', color='info')
+        return html.Div([disclaimer, list_div])
