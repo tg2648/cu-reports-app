@@ -43,7 +43,7 @@ button_group = dbc.Col(
 )
 
 title = dbc.Col(
-    html.H5('A&S Faculty Governance', className='text-info mb-0'),
+    html.H5('Faculty Governance', className='text-info mb-0'),
 )
 
 header = html.Div(
