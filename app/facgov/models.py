@@ -95,7 +95,7 @@ class FacgovGeneral(Facgov):
 
             for subcat_name, subcat in cat.items():
                 row = html.Div([], className='row')  # Create a row for each subcategory
-                col = html.Div(html.U(subcat_name), className='col-sm-auto')  # First column is the name of the subcategory
+                col = html.Div(subcat_name, className='col-sm-auto')  # First column is the name of the subcategory
                 row.children.append(col)
 
                 ul = html.Ul([], className='pl-0')  # Second column is the list of items
@@ -186,7 +186,7 @@ class FacgovFacultyMeeting(Facgov):
 
             for year_name, year_data in unit_data.items():
                 row = html.Div([], className='row')  # Create a row for each year
-                col = html.Div(html.U(year_name), className='col-sm-auto')  # First column is the name of the year
+                col = html.Div(year_name, className='col-sm-auto')  # First column is the name of the year
                 row.children.append(col)
 
                 ul = html.Ul([], className='pl-0')  # Second column is the list of items
@@ -220,5 +220,5 @@ class FacgovFacultyMeeting(Facgov):
 
                 list_div.children.append(row)
 
-        disclaimer = dbc.Alert('More minutes will be made available as they are gathered.', color='info')
+        disclaimer = dbc.Alert('Minutes will be made available whenever possible', color='info')
         return html.Div([disclaimer, list_div])
