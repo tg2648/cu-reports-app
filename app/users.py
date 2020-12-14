@@ -110,7 +110,7 @@ class User(object):
         Get details about user's access to the dept profiles for a given argument.
         Argument options:
             - 'dept' returns a list of departments to which user has faculty-level access
-            - 'chair_dept' returns a list of department codes for which user has chair-level access
+            - 'dept_chair' returns a list of department codes for which user has chair-level access
 
         Returns:
             - If user has access: a list of department codes
