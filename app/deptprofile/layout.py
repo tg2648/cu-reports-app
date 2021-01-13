@@ -46,7 +46,7 @@ def serve_deptprofile_layout():
         # Do this here to call deptprofile_access only once
         dropdown_options = []
         for option in ALL_DROPDOWN_OPTIONS:
-            if option['value'] in depts:
+            if option['value'].strip('_') in depts:
                 dropdown_options.append(option)
 
         layout = html.Div(
