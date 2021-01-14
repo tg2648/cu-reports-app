@@ -2,6 +2,7 @@
 1. To convert S3 keys to user-friendly values
 2. To convert fiscal years to academic years
 """
+import os
 
 checkbox_conversion = {
     'faculty_meeting': 'Faculty Meetings',
@@ -12,6 +13,12 @@ heading_conversion = {
     'PPC': 'Policy and Planning Committee',
     'CED': 'Committee on Equity and Diversity',
     'faculty_meeting': 'Faculty Meetings',
+}
+
+committee_links = {
+    'EPPC': os.getenv('EPPC_LINK'),
+    'PPC': os.getenv('PPC_LINK'),
+    'CED': os.getenv('CED_LINK'),
 }
 
 

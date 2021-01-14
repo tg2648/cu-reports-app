@@ -14,6 +14,7 @@ from flask import url_for
 from app.utils.func import multisort
 from app.facgov.conversions import convert_for_heading
 from app.facgov.conversions import fiscal_to_academic
+from app.facgov.conversions import committee_links
 
 
 class Facgov(object):
@@ -73,7 +74,7 @@ class FacgovGeneral(Facgov):
         d = defaultdict(lambda: defaultdict(lambda: []))
 
         for item in items:
-            unit = convert_for_heading(item['unit'])
+            unit = item['unit']
             year = fiscal_to_academic(item['year'])
             d[unit][year].append({'file_name': item['file_name'], 'key': item['key']})
 
@@ -91,7 +92,13 @@ class FacgovGeneral(Facgov):
         list_div = html.Div([])
 
         for cat_name, cat in self.by_year.items():
-            list_div.children.append(html.P(cat_name, className='text-info font-weight-bold'))
+            cat_link = html.A(
+                convert_for_heading(cat_name),
+                href=committee_links.get(cat_name),
+                target='_blank',
+                className='text-info'
+            )
+            list_div.children.append(html.P(cat_link, className='font-weight-bold'))
 
             for subcat_name, subcat in cat.items():
                 row = html.Div([], className='row')  # Create a row for each subcategory
