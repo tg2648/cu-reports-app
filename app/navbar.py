@@ -20,21 +20,8 @@ current_user = User()
 
 def serve_navbar():
 
-    navbar_left = [
-        dbc.Nav(
-            [
-                dbc.NavItem(dbc.NavLink('Lab Occupancy Form', href='/lab_occupancy/', external_link=True)),
-                html.Div(style={'border-left': '1px solid rgba(255,255,255,0.5)'}),
-                # dbc.NavItem(dbc.NavLink('Dept. Profiles', href='/deptprofile/', external_link=True)),
-                dbc.NavItem(dbc.NavLink('Search Dashboard', href='/searchcom/', external_link=True)),
-                dbc.NavItem(dbc.NavLink('FIF Archive', href='/fif_archive/', external_link=True)),
-            ],
-            className='navbar-nav mr-auto'
-        )
-    ]
-
     navbar_right = [
-        html.Span('Signed in as ' + current_user.uni, className='navbar-text'),
+        html.Span('Signed in as ' + current_user.uni, className='navbar-text ml-auto'),
         html.A(
             dbc.Button('Logout', id='logout-button', className='btn-secondary my-2 ml-2 my-sm-0'),
             href='/logout'
@@ -61,7 +48,7 @@ def serve_navbar():
                     # Each navbar subcomponent is a list, need to merge into one list
                     # to pass as children
                     dbc.Collapse(
-                        navbar_left + navbar_right,
+                        navbar_right,
                         id='navbar-collapse',
                         navbar=True),
                 ],

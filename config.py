@@ -31,15 +31,15 @@ class Config(object):
     # Dynamo [required by flask_dynamo]
     DYNAMO_SESSION = boto3.Session(
         region_name='us-east-2',
-        aws_access_key_id=os.getenv('DB_ACCESS_KEY'),
-        aws_secret_access_key=os.getenv('DB_SECRET')
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY'),
+        aws_secret_access_key=os.getenv('AWS_SECRET')
     )
 
     # S3
     S3_RESOURCE = boto3.resource(
         's3',
-        aws_access_key_id=os.getenv('S3_ACCESS_KEY'),
-        aws_secret_access_key=os.getenv('S3_SECRET')
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY'),
+        aws_secret_access_key=os.getenv('AWS_SECRET')
     )
     FIF_FILES_BUCKET = os.getenv('FIF_BUCKET_NAME')
     TEMPLATES_BUCKET = os.getenv('TEMPLATES_BUCKET_NAME')
@@ -63,6 +63,8 @@ class ProdConfig(Config):
     DB_SEARCHCOM_SUBFIELDS = os.getenv('DB_SEARCHCOM_SUBFIELDS_PROD')
     DB_LAB_OCCUPANCY = os.getenv('DB_LAB_OCCUPANCY_PROD')
     DB_DEPTPROFILE = os.getenv('DB_DEPTPROFILE_PROD')
+    DB_FACGOV = os.getenv('DB_FACGOV_PROD')
+    FACGOV_BUCKET = os.getenv('FACGOV_BUCKET_NAME_PROD')
 
 
 class DevConfig(Config):
@@ -81,3 +83,5 @@ class DevConfig(Config):
     DB_SEARCHCOM_SUBFIELDS = os.getenv('DB_SEARCHCOM_SUBFIELDS_DEV')
     DB_LAB_OCCUPANCY = os.getenv('DB_LAB_OCCUPANCY_DEV')
     DB_DEPTPROFILE = os.getenv('DB_DEPTPROFILE_DEV')
+    DB_FACGOV = os.getenv('DB_FACGOV_DEV')
+    FACGOV_BUCKET = os.getenv('FACGOV_BUCKET_NAME_DEV')

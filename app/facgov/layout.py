@@ -14,51 +14,41 @@ This is in order for Dash to pick-up the session cookie
 """
 
 # Third party imports
-# from dash.dependencies import ALL
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-
-from app.navbar import serve_navbar
-from app.deptprofile.layouts.filters import serve_dept_dropdown
-from app.deptprofile.layouts.filters import ALL_DROPDOWN_OPTIONS
-from app.deptprofile.layouts.header import header
-from app.deptprofile.layouts.tabs import tabs
+import dash_core_components as dcc
 
 # Local application imports
 from app.users import User
 from app.logger import DynamoAccessLogger
 
+from app.navbar import serve_navbar
+from app.facgov.layouts.header import header
+from app.facgov.layouts.file_list import serve_file_list
 
-logger = DynamoAccessLogger('deptprofile')  # Initialize logger with appropriate resource
+
+logger = DynamoAccessLogger('facgov')  # Initialize logger with appropriate resource
 
 
-def serve_deptprofile_layout():
+def serve_facgov_layout():
 
     current_user = User()
 
-    depts = current_user.deptprofile_access('dept')
-
-    if depts:
+    # Check access, no access if an empty list is returned from a User class
+    if current_user.has_facgov_access():
 
         logger.log_access(has_access=True)
-
-        # Create a list of dropdown options based on user permissions
-        # Do this here to call deptprofile_access only once
-        dropdown_options = []
-        for option in ALL_DROPDOWN_OPTIONS:
-            if option['value'].strip('_') in depts:
-                dropdown_options.append(option)
 
         layout = html.Div(
             [
                 serve_navbar(),
                 html.Div(
                     [
+                        dcc.Location(id='facgov-url', refresh=True),
                         header,
-                        serve_dept_dropdown(dropdown_options=dropdown_options),
-                        tabs
+                        serve_file_list(),
                     ],
-                    className='container pb-5',
+                    className="container pb-5",
                 ),
             ]
         )
@@ -87,7 +77,7 @@ def serve_deptprofile_layout():
                     [
                         no_access_alert
                     ],
-                    className='container'
+                    className="container"
                 ),
             ]
         )

@@ -10,6 +10,7 @@ import plotly.graph_objs as go
 
 # Local application imports
 from app.deptprofile.utils.modebar import modebar_config
+from app.deptprofile.utils.years import YEARS, MAX_YEAR_ID
 
 
 """
@@ -58,14 +59,14 @@ classes_tree_chart_slider = dbc.Col(
     dbc.FormGroup(
         dcc.Slider(
             id='classes-tree-chart-slider',
-            min=0,
-            max=10,
+            min=3,
+            max=MAX_YEAR_ID,
             step=1,
             marks={
-                0: '2007/08',
-                10: '2019/20'
+                3: '2007/08',
+                MAX_YEAR_ID: YEARS.get(MAX_YEAR_ID).academic
             },
-            value=10,
+            value=MAX_YEAR_ID,
         )
     ),
     width=6
@@ -75,14 +76,14 @@ enrollments_tree_chart_slider = dbc.Col(
     dbc.FormGroup(
         dcc.Slider(
             id='enrollments-tree-chart-slider',
-            min=0,
-            max=10,
+            min=3,
+            max=MAX_YEAR_ID,
             step=1,
             marks={
-                0: '2007/08',
-                10: '2019/20'
+                3: '2007/08',
+                MAX_YEAR_ID: YEARS.get(MAX_YEAR_ID).academic
             },
-            value=10,
+            value=MAX_YEAR_ID,
         )
     ),
     width=6
@@ -94,26 +95,28 @@ Classes/enrollments groups
 classes_group = html.Div(
     [
         html.H5('Department Offered Courses: Classes by Instructor Appointment', className='text-info'),
-        classes_bar_chart,
         html.H6('Excludes Core courses. See notes for additional details.', className='small text-muted'),
+        classes_bar_chart,
         html.H5('Core Courses: Classes by Instructor Appointment', className='text-info'),
+        html.H6('Core includes: Literature Humanities, Contemporary Civilizations, Art Humanities, Music Humanitites,\
+                Frontiers of Science, Writing. See notes for additional details.', className='small text-muted'),
         classes_core_chart,
-        html.H6('Core includes: Literature Humanities, Contemporary Civilizations, Art Humanities, Music Humanitites, Frontiers of Science, Writing. See notes for additional details.', className='small text-muted'),
-        classes_tree_chart_slider,
-        classes_tree_chart
+        # classes_tree_chart_slider,
+        # classes_tree_chart
     ]
 )
 
 enrollments_group = html.Div(
     [
         html.H5('Department Offered Courses: Enrollments by Instructor Appointment', className='text-info'),
-        enrollments_bar_chart,
         html.H6('Excludes Core courses. See notes for additional details.', className='small text-muted'),
+        enrollments_bar_chart,
         html.H5('Core Courses: Enrollments by Instructor Appointment', className='text-info'),
+        html.H6('Core includes: Literature Humanities, Contemporary Civilizations, Art Humanities, Music Humanitites,\
+                Frontiers of Science, Writing. See notes for additional details.', className='small text-muted'),
         enrollments_core_chart,
-        html.H6('Core includes: Literature Humanities, Contemporary Civilizations, Art Humanities, Music Humanitites, Frontiers of Science, Writing. See notes for additional details.', className='small text-muted'),
-        enrollments_tree_chart_slider,
-        enrollments_tree_chart
+        # enrollments_tree_chart_slider,
+        # enrollments_tree_chart
     ]
 )
 
@@ -134,23 +137,23 @@ classes_tab = html.Div(
                         id='classes-chart-choices',
                     ),
                 ),
-                dbc.Col(
-                    dbc.FormGroup(
-                        dcc.RangeSlider(
-                            id='classes-bar-chart-slider',
-                            min=0,
-                            max=10,
-                            step=1,
-                            marks={
-                                0: '2007/08',
-                                10: '2019/20'
-                            },
-                            value=[0, 10],
-                            allowCross=False
-                        ),
-                    ),
-                    width=6
-                )
+                # dbc.Col(
+                #     dbc.FormGroup(
+                #         dcc.RangeSlider(
+                #             id='classes-bar-chart-slider',
+                #             min=0,
+                #             max=10,
+                #             step=1,
+                #             marks={
+                #                 0: '2007/08',
+                #                 10: '2019/20'
+                #             },
+                #             value=[0, 10],
+                #             allowCross=False
+                #         ),
+                #     ),
+                #     width=6
+                # )
             ]
         ),
         html.Div(id='classes-chart-container'),

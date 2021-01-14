@@ -3,10 +3,15 @@
 {%- block content %}
 <div class="page-header">
 
-  <h2 class="text-info mt-4">Welcome</h2>
+  {%- if config['ENV'] == 'dev' %}
+  <div class="alert alert-info my-3">
+    <strong>Heads up!</strong> You are on the test version of the A&S reporting website.
+  </div>
+  {%- endif %}
 
   <div class="row mt-3">
     <div class="col-md">
+      <h3 class="text-info mb-3">Welcome</h3>
       <ul style="padding-left: 7px; list-style-position: inside;">
         <li>All pages require UNI authentication.</li>
         <li>Dashboards are optimized for desktop viewing.</li>
@@ -22,53 +27,29 @@
           <li><a href="https://plot.ly/dash/" target="_blank">Plotly</a> for developing an open-source dashboard platform</li>
           <li>Michael Stanish (A&S IT) for invaluable technical support and guidance</li>
           <li>CUIT for web hosting and CAS support</li>
-          <li>Open-source community {#(<a href="https://www.palletsprojects.com/p/flask/" target="_blank">Flask</a> project in particular)</li>#}
-          {#
-          <!-- <li>Nathan Colbert (QMSS '18)</li> -->
-          <!-- <li>Office of Equal Opportunity and Affirmative Action</li>
-          <li>Office of the Vice Provost for Faculty Advancement</li> -->
-          #}
+          <li>Open-source community</li>
         </ul>
       </small>
     </div>
     
-    <div class="col-md-5">
+    <div class="col-md-3">
+      <h3 class="text-info mb-3" style="padding-left: 0.4rem;">Navigation</h3>
       <div class="list-group">
-        <a href="{{ url_for('lab_occupancy.index') }}" class="list-group-item list-group-item-action flex-column align-items-start">
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1 text-info">Lab Occupancy Form</h5>
-          </div>
-        </a> 
-      </div>
-      <hr>
-      <div class="list-group">
-          {#
-          <a href="/deptprofile/" class="list-group-item list-group-item-action flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1 text-info">Department Profile Dashboard</h5>
-            </div>
-            <p class="mb-1">
-              Department data on faculty, students, and classes.
-            </p>
+          <a href="/faculty_governance/" class="list-group-item list-group-item-action flex-column align-items-start">
+            Faculty Governance
           </a>
-          #}
+          <a href="/deptprofile/" class="list-group-item list-group-item-action flex-column align-items-start">
+            Department Profiles
+          </a>
           <a href="/searchcom/" class="list-group-item list-group-item-action flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1 text-info">Search Committee Dashboard</h5>
-              <small class="text-muted">v1.1</small>
-            </div>
-            <p class="mb-1">
-              Provides a summary of demographics of applicants and comparisons to the pipeline for ladder-rank searches.
-            </p>
+            Search Committee Dashboard
           </a>
           <a href="{{ url_for('fif_archive.index') }}" class="list-group-item list-group-item-action flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1 text-info">FIF Archive</h5>
-            </div>
-            <p class="mb-1">
-              Get a copy of your FIF (starting 2018-19).
-            </p>
-          </a>   
+            FIF Archive
+          </a>
+          <a href="{{ url_for('lab_occupancy.index') }}" class="list-group-item list-group-item-action flex-column align-items-start">
+            Lab Occupancy Form
+          </a> 
       </div>
     </div>
   </div>

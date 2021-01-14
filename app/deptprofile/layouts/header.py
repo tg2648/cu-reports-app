@@ -1,8 +1,6 @@
 """
 Layout: Top row
 Contains the title, changelog, and notes.
-
-TODO: The changelog might get too long after some time
 """
 
 # Third party imports
@@ -13,7 +11,35 @@ import dash_html_components as html
 
 notes_text = dcc.Markdown(
     '''
-    Todo
+    The notes below pertain to the department profiles.
+
+    Please note the following about Faculty Type:
+    - NTBOT stands for non-tenured but on track. NTBOT counts include term professors with the exception of Mathematics and Statistics where those are called Term Asst. Prof.
+    - Lecturers stand for renewable Lecturers in Discipline and Associates in Discipline and Associates in Music Performance
+    - Other Full-time stands for non-renewable lecturers
+    - Adjunct stands for part-time instructional faculty
+    - Graduate St. stands for graduate student instructors
+
+    **Faculty**
+
+    - Full Time Equivalent (FTE) counts are the official Arts and Sciences counts. FTE counts in the Faculty charts are rounded to the nearest whole number. Additional detail can be found by hovering over the relevant FTE count.
+    - Instructional FTE (IFTE) accounts for instructional leaves such as sabbaticals.  They are the FTE count in the department minus an estimate of the decrease in instructional obligations.  IFTE calculations are estimates.
+    - Underrepresented Minority (URM) are faculty who have self-identified as at least one of the following: Hispanic or Latino, American Indian or Alaska Native, Black or African American, or Native Hawaiian or Other Pacific Islander.
+
+    **Students**
+
+    - Program enrollments are for the fall term of each year.
+    - Each undergraduate program declaration including majors, concentrations, and minors, are counted as 1 student.
+    - Inter-departmental program declarations are counted as 1 student in each department.  In the divisional profiles, inter-departmental programs are counted as 0.5 in each department.
+    - Graduate PhD program are counted as 1 student regardless of what level of the degree they are currently working towards (MA, MPhil, or PhD).
+
+    **Classes  **
+
+    - Total enrollments for department offered classes include all classes offered by the department, excluding core and laboratory classes.
+    - Class enrollments are included once if co-taught.
+    - Graduate Student Appointment: Instructors with graduate student appointments such as Graduate Research Assistant, Preceptor, Teaching Assistant/Fellow, etc.
+
+    For questions, please contact Timur Gulyamov (<tg2648@columbia.edu>).
     '''
 )
 
@@ -26,7 +52,7 @@ changelog_text = dcc.Markdown(
 
 contact_text = dcc.Markdown(
     '''
-    For any questions, please contact Timur Gulyamov (tg2648) or Rose Razaghian (rr222).
+    For any questions, please contact Timur Gulyamov (<tg2648@columbia.edu>) or Rose Razaghian (<rr222@columbia.edu>).
     '''
 )
 
@@ -109,7 +135,7 @@ warning_badge = dbc.Col(
 )
 
 title = html.H3(
-    'Department Profile Dashboard',
+    'Department Profile',
     className='text-info'
 )
 
@@ -129,23 +155,3 @@ header = html.Div(
         title
     ]
 )
-
-# changelog_popup = dbc.Toast(
-#             changelog_text,
-#             id="=changelog-popup",
-#             header="Changelog",
-#             is_open=False,
-#             dismissable=True,
-#             # top: 66 positions the toast below the navbar
-#             style={"position": "fixed", "top": 66, "right": 10, "width": 350},
-#         )
-
-# notes_popup = dbc.Toast(
-#             notes_text,
-#             id="=notes-popup",
-#             header="Notes",
-#             is_open=False,
-#             dismissable=True,
-#             # top: 66 positions the toast below the navbar
-#             style={"position": "fixed", "top": 66, "right": 10, "width": 350},
-#         )

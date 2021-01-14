@@ -4,7 +4,6 @@ Faculty tab callacks
 
 # Third party imports
 from dash.dependencies import Input, Output
-from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
 
 from flask import current_app
@@ -12,6 +11,7 @@ from flask import current_app
 from boto3.dynamodb.conditions import Attr
 
 # Local application imports
+from app.users import User
 from app.extensions import dynamo
 
 from app.deptprofile.utils.styling import axes, margin
@@ -26,10 +26,6 @@ def register_faculty_callbacks(dashapp):
 
     table = dynamo.tables[current_app.config['DB_DEPTPROFILE']]
 
-    ###############
-    ### FACULTY ###
-    ###############
-
     # CHART
 
     @dashapp.callback(Output('faculty-chart-container', 'children'),
@@ -43,7 +39,6 @@ def register_faculty_callbacks(dashapp):
         elif choice == 'fte-with-demo':
             return faculty_demo_chart
 
-
     @dashapp.callback(Output('faculty-fte-chart', 'figure'),
                       [Input('dept-dropdown', 'value')])
     def update_faculty_fte_chart(dept):
@@ -52,7 +47,7 @@ def register_faculty_callbacks(dashapp):
             KeyConditionExpression='PK = :pk AND SK BETWEEN :lower AND :upper',
             ExpressionAttributeValues={
                 ':pk': f'DEPT#{dept}',
-                ':lower': f'DATA#FACULTY_DATA#2005',
+                ':lower': 'DATA#FACULTY_DATA#2005',
                 ':upper': f'DATA#FACULTY_DATA#{int(MAX_FISCAL_YEAR) + 1}$',
             },
             ProjectionExpression='fte, ten_stat',
@@ -104,7 +99,7 @@ def register_faculty_callbacks(dashapp):
                 title='FTE for Faculty/Person Count for Adjuncts',
             ),
             legend={'traceorder': 'normal'},
-            margin=margin(),
+            margin=margin(l=55),
         )
 
         return {'data': chart_data, 'layout': chart_layout}
@@ -117,7 +112,7 @@ def register_faculty_callbacks(dashapp):
             KeyConditionExpression='PK = :pk AND SK BETWEEN :lower AND :upper',
             ExpressionAttributeValues={
                 ':pk': f'DEPT#{dept}',
-                ':lower': f'DATA#FACULTY_DATA#2005',
+                ':lower': 'DATA#FACULTY_DATA#2005',
                 ':upper': f'DATA#FACULTY_DATA#{int(MAX_FISCAL_YEAR) + 1}$',
             },
             FilterExpression=Attr('ten_stat').eq('Tenured') | Attr('ten_stat').eq('NTBOT'),
@@ -126,7 +121,6 @@ def register_faculty_callbacks(dashapp):
         )
 
         data = resp['Items']
-
         chart_data = []
         x_axis = make_academic_year_range(0, MAX_YEAR_ID)
 
@@ -174,7 +168,7 @@ def register_faculty_callbacks(dashapp):
             )
         )
 
-        ## LINE PLOTS
+        # LINE PLOTS
 
         y_axis_line_t = [round(float(item.get('percent_fem')) * 100) if item.get('percent_fem') is not None else None
                          for item in data if item.get('ten_stat') == 'Tenured']
@@ -183,7 +177,7 @@ def register_faculty_callbacks(dashapp):
 
         chart_data.append(
             go.Scatter(
-                name=f'% Tenured Female',
+                name='% Tenured Female',
                 x=x_axis,
                 y=y_axis_line_t,
                 mode='lines+markers+text',
@@ -208,7 +202,7 @@ def register_faculty_callbacks(dashapp):
 
         chart_data.append(
             go.Scatter(
-                name=f'% NTBOT Female',
+                name='% NTBOT Female',
                 x=x_axis,
                 y=y_axis_line_nt,
                 mode='lines+markers+text',
@@ -238,18 +232,26 @@ def register_faculty_callbacks(dashapp):
         y_axis_line_urm = []
 
         for t_fte, nt_fte, t_urm, nt_urm in zip(y_axis_bar_t, y_axis_bar_nt, urm_t, urm_nt):
-            if t_urm is not None or nt_urm is not None:
+
+            calc = None
+            if t_urm is not None and nt_urm is not None:
                 calc = (float(t_fte) * t_urm + float(nt_fte) * nt_urm) / (float(t_fte) + float(nt_fte))
-                y_axis_line_urm.append(round(calc * 100))
-            else:
+            elif t_urm is not None and nt_urm is None:
+                calc = (float(t_fte) * t_urm + float(nt_fte) * 0) / (float(t_fte) + float(nt_fte))
+            elif nt_urm is not None and t_urm is None:
+                calc = (float(t_fte) * 0 + float(nt_fte) * nt_urm) / (float(t_fte) + float(nt_fte))
+
+            if calc is None:
                 y_axis_line_urm.append(None)
+            else:
+                y_axis_line_urm.append(round(calc * 100))
 
         hover_labels = [f'{i}%' if i is not None else None for i in y_axis_line_urm]
         text_labels = make_text_labels(hover_labels)
 
         chart_data.append(
             go.Scatter(
-                name=f'% NTBOT and Tenured URM',
+                name='% NTBOT and Tenured URM',
                 x=x_axis,
                 y=y_axis_line_urm,
                 mode='lines+markers+text',
@@ -289,18 +291,29 @@ def register_faculty_callbacks(dashapp):
 
     # TABLE
 
-    @dashapp.callback(Output('faculty-table', 'data'),
+    @dashapp.callback([Output('faculty-table', 'data'),
+                       Output('faculty-table-container', 'style')],
                       [Input('dept-dropdown', 'value')])
     def update_faculty_table(dept):
 
-        resp = table.query(
-            KeyConditionExpression='PK = :pk AND SK BETWEEN :lower AND :upper',
-            ExpressionAttributeValues={
-                ':pk': f'DEPT#{dept}',
-                ':lower': f'DATA#FACULTY_LIST#{MAX_FISCAL_YEAR}',
-                ':upper': f'DATA#FACULTY_LIST#{MAX_FISCAL_YEAR}$',
-            },
-            ScanIndexForward=True
-        )
+        # Do not display table for aggregate views
+        if dept in ['AS', 'HUM', 'NS', 'SS']:
+            return [], {'display': 'none'}
 
-        return resp['Items']
+        # Do not display table without chair-level access
+        # to the selected department
+        current_user = User()
+        if dept not in current_user.deptprofile_access('dept_chair'):
+            return [], {'display': 'none'}
+        else:
+            resp = table.query(
+                KeyConditionExpression='PK = :pk AND SK BETWEEN :lower AND :upper',
+                ExpressionAttributeValues={
+                    ':pk': f'DEPT#{dept}',
+                    ':lower': f'DATA#FACULTY_LIST#{MAX_FISCAL_YEAR}',
+                    ':upper': f'DATA#FACULTY_LIST#{MAX_FISCAL_YEAR}$',
+                },
+                ScanIndexForward=True
+            )
+
+            return resp['Items'], {'display': 'inline'}

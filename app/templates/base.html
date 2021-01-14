@@ -4,7 +4,6 @@
 <head>
 {%- block head %}
 {%- if config['ENV'] == 'prod' %}
-<!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145333546-1"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
@@ -16,18 +15,21 @@ gtag('config', 'UA-145333546-1');
 {%- endif %}
 <title>{%- block title %}A&S Reporting{%- endblock title %}</title>
 
-<!-- Required meta tags -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="noindex, nofollow">
 
-<!-- Favicon -->
 <link rel="shortcut icon" href="https://cu-dash-static.s3.us-east-2.amazonaws.com/img/favicon.png" type="image/x-icon">
 <link rel="icon" href="https://cu-dash-static.s3.us-east-2.amazonaws.com/img/favicon.png" type="image/x-icon">
 
-<!-- Bootstrap/FontAwesome CSS -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.0/cerulean/bootstrap.min.css" crossorigin="anonymous">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" crossorigin="anonymous">
+
+{%- if config['ENV'] == 'prod' %}
+<link rel="stylesheet" href="https://cu-dash-static.s3.us-east-2.amazonaws.com/css/00_home.css">
+{%- else -%}
+<link rel="stylesheet" href="{{ url_for('static', filename='00_home.css') }}">
+{%- endif %}
 {%- endblock head %}
 </head>
 
@@ -44,52 +46,16 @@ gtag('config', 'UA-145333546-1');
     </button>
 
     <div class="collapse navbar-collapse" id="navbarColor02">
-        <ul class="navbar-nav mr-auto">
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('lab_occupancy.index') }}">Lab Occupancy Form</a>
-            </li>
-
-                <div style="border-left:1px solid rgba(255,255,255,0.5)"></div>
-
-            {#
-            <li class="nav-item">
-                <a class="nav-link" href="/deptprofile/">Dept. Profile</a>
-            </li>
-            #}
-
-            <li class="nav-item">
-                <a class="nav-link" href="/searchcom/">Search Dashboard</a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('fif_archive.index') }}">FIF Archive</a>
-            </li>
-            {#
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-                    FIF
-                </a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="/fif/">FIF Dashboard</a>
-                    <a class="dropdown-item" href="{{ url_for('fif_archive.index') }}">FIF Archive</a>
-                </div>
-            </li>    
-            #}
-        </ul>
         {% if not 'CAS_USERNAME' in session %}
-            <form class="form-inline my-2 my-lg-0" action="{{ url_for('cas.login') }}">
+            <form class="form-inline my-2 my-lg-0 ml-auto" action="{{ url_for('cas.login') }}">
                 <button class="btn btn-secondary my-2 my-sm-0">Login</button>
             </form>
         {% else %}
-            <span class="navbar-text">
-                Signed in as {{ session.CAS_USERNAME }} 
-            </span>
+            <span class="navbar-text ml-auto">Signed in as {{ session.CAS_USERNAME }}</span>
             <form class="form-inline my-2 my-lg-0" action="{{ url_for('cas.logout') }}">
                 <button class="btn btn-secondary my-2 ml-2 my-sm-0">Logout</button>
             </form>
         {% endif %}
-        </ul>   
     </div>
 </div>
 </nav>

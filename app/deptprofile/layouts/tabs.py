@@ -3,10 +3,7 @@ Layout: Tabs
 """
 
 # Third party imports
-import dash_bootstrap_components as dbc
 import dash_core_components as dcc
-import dash_html_components as html
-import plotly.graph_objs as go
 
 # Local application imports
 from app.deptprofile.layouts.faculty import faculty_tab

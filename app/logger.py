@@ -59,7 +59,7 @@ class DynamoAccessLogger(object):
         if has_request_context():
 
             access_table = dynamo.tables[self.access_table_name]
-            timestamp = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M')
+            timestamp = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S')
 
             # Default payload
             item = {

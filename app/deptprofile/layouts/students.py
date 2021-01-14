@@ -3,10 +3,8 @@ Layout: Students Tab
 '''
 
 # Third party imports
-import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-import dash_table
 import plotly.graph_objs as go
 
 # Local application imports
@@ -54,21 +52,45 @@ students_phd_chart = dcc.Graph(
 
 """
 Main students tab skeleton
-TODO: ADD interdept and hybrid
 """
 students_tab = html.Div(
     [
         html.H5('Undergraduate', id='students-ug-header', className='text-info'),
         students_ug_chart,
-        html.H5('Masters', id='students-masters-header', className='text-info'),
-        students_masters_chart,
-        html.H5('Interdepartmental Masters', id='students-interdept-header', className='text-info'),
-        students_interdept_chart,
-        html.H5('Hybrid Masters', id='students-hybrid-header', className='text-info'),
-        students_hybrid_chart,
-        html.H5('SPS', id='students-sps-header', className='text-info'),
-        students_sps_chart,
-        html.H5('PhD', id='students-phd-header', className='text-info'),
-        students_phd_chart,
+        html.Div(
+            [
+                html.H5('Masters', id='students-masters-header', className='text-info'),
+                students_masters_chart,
+            ],
+            id='students-masters-container'
+        ),
+        html.Div(
+            [
+                html.H5('Interdepartmental Masters', id='students-interdept-header', className='text-info'),
+                students_interdept_chart,
+            ],
+            id='students-interdept-container'
+        ),
+        html.Div(
+            [
+                html.H5('Hybrid Masters', id='students-hybrid-header', className='text-info'),
+                students_hybrid_chart,
+            ],
+            id='students-hybrid-container'
+        ),
+        html.Div(
+            [
+                html.H5('SPS', id='students-sps-header', className='text-info'),
+                students_sps_chart,
+            ],
+            id='students-sps-container'
+        ),
+        html.Div(
+            [
+                html.H5('PhD', id='students-phd-header', className='text-info'),
+                students_phd_chart,
+            ],
+            id='students-phd-container'
+        ),
     ]
 )

@@ -34,28 +34,31 @@ def build_req_dropdown_options(current_user_reqs):
     search_info = {
         'req_num': [],
         'dept_name': [],
-        'position_title': []
+        'position_title': [],
+        'academic_year': [],
     }
 
     for req_num in current_user_reqs:
         response = posting_table.query(
             KeyConditionExpression=Key('req_num').eq(req_num),
-            ProjectionExpression='dept_name,position_title'  # will return only these attributes
+            ProjectionExpression='dept_name,position_title,academic_year'  # will return only these attributes
         )
 
         dept_name = response['Items'][0]['dept_name']
         position_title = response['Items'][0]['position_title']
+        academic_year = response['Items'][0]['academic_year']
 
         search_info['req_num'].append(req_num)
         search_info['dept_name'].append(dept_name)
         search_info['position_title'].append(position_title)
+        search_info['academic_year'].append(academic_year)
 
     options_df = pd.DataFrame.from_dict(search_info)
-    options_df.sort_values(by=['dept_name', 'req_num'], inplace=True)
+    options_df.sort_values(by=['dept_name', 'academic_year', 'req_num'], inplace=True, ascending=[True, False, True])
 
     options = []
     for i in range(len(options_df)):
-        options.append({'label': f"{options_df['req_num'].iloc[i]}: {options_df['dept_name'].iloc[i]} - {options_df['position_title'].iloc[i]}", 'value': options_df['req_num'].iloc[i]})
+        options.append({'label': f"{options_df['academic_year'].iloc[i]} - {options_df['req_num'].iloc[i]} - {options_df['dept_name'].iloc[i]} - {options_df['position_title'].iloc[i]}", 'value': options_df['req_num'].iloc[i]})
 
     return options
 
